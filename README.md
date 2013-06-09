@@ -133,4 +133,6 @@ From Crosby et al. "Opportunities And Limits Of Remote Timing Attacks":
 
 The best way to beat these attacks is to use a constant time hash equality check, rather than an optimized check. That is easily achieved by iterating through the full hash before returning the answer, regardless of how soon the answer is known.
 
+Read more from [Coda Hale's "A Lesson in Timing Attacks"](http://codahale.com/a-lesson-in-timing-attacks/).
+
 *Created by Eric Elliott for the book, "Programming JavaScript Applications" (O'Reilly)*
