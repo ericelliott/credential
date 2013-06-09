@@ -6,14 +6,53 @@ Employs cryptographically secure, password unique salts to prevent rainbow table
 
 Key stretching is used to make brute force attacks impractical.
 
+
+## API
+
+### .hash()
+
+`.hash(password, callback)`
+`callback(err, hash) // 'salt$hash'`
+
+Takes a new password and creates a unique salt and hash combination in the form `'salt$hash'`, suitable for storing in a single text field.
+
+* @param {String} password  A password to hash encode.
+
+
+### .verify()
+
+`.verify(hash, input, callback)`
+`callback(err, isValid)`
+
+Takes a stored hash, password input from the user, and a callback, and determines whether or not the user's input matches the stored password.
+
+* @param  {String}   hash     A stored password hash
+* @param  {String}   input    User's password input
+* @param  {Function} callback callback(err, isValid)
+
+
+### .configure(options)
+
+Alter defaults for `keylength` or `iterations`.
+
+**Warning:** Decreasing these values can make your password
+database less secure.
+
+* @param  {Object} options
+* @param  {Number} options.keylength
+* @param  {Number} options.iterations
+* @return {Object} credential  the credential object
+
+
+## Motivation
+
 Several other libraries claim to do the same thing, but fall short. Several fail to use cryptographically secure salts, which make salt guessing possible. Others fail to use either a long enough salt, or a long enough hash. The salt should be the same size of the hash. No shorter, and no longer.
 
 Others fail to use key stretching, or fail to use enough iterations (taking into account processor speeds, and clustered attacks, while balancing that against user experience).
 
 The hash should be sufficiently long not just to prevent an attack from a single machine, but to prevent an attack from a large cluster of machines.
 
-
-## Motivation
+## Background
 
 Passwords should be stored with a one way encryption hash, so that even if a malicious intruder obtains access to the user database, they still won't have access to user passwords.
 
