@@ -97,6 +97,26 @@ var crypto = require('crypto'),
   },
 
   /**
+   * constantEquals(x, y)
+   *
+   * Compare two equal-length hashes, x and y with a
+   * constant-time algorithm to prevent attacks based on
+   * timing statistics.
+   */
+  constantEquals = function constantEquals(x, y) {
+    var result = true,
+      length = y.length,
+      i;
+
+    for (i=0; i<length; i++) {
+      if (x.charCodeAt(i) !== y.charCodeAt(i)) {
+        result = false;
+      }
+    }
+    return result;
+  },
+
+  /**
    * verify(hash, input, callback)
    *
    * Takes a stored hash, password input from the user,
@@ -116,7 +136,7 @@ var crypto = require('crypto'),
       if (err) {
         return callback(err);
       }
-      callback(null, (salt + '$' + newHash === oldHash));
+      callback(null, constantEquals(salt + '$' + newHash, oldHash));
     });
   },
 
