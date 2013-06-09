@@ -2,7 +2,7 @@
 
 Fortify your user's passwords against rainbow table and brute force attacks using Node's built in crypto functions.
 
-Employs cryptographically secure, password unique salts to prevent rainbow table attacks.
+Employs cryptographically secure, per password salts to prevent rainbow table attacks.
 
 Key stretching is used to make brute force attacks impractical.
 
