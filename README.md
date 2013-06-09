@@ -6,6 +6,40 @@ Employs cryptographically secure, per password salts to prevent rainbow table at
 
 Key stretching is used to make brute force attacks impractical.
 
+## Installing
+
+```
+$ npm install --save credential
+```
+
+## Examples
+
+### .hash()
+
+```
+var pw = require('credential'),
+  newPassword = 'I have a really great password.';
+
+pw.hash(newPassword, function (err, hash) {
+  if (err) { throw err; }
+  console.log('Store the password hash.', hash);
+});
+```
+
+### .verify()
+
+```
+var pw = require('credential'),
+  storedHash = 'o/HsuUsd1bjV2malqmakJDjwV7uPSHFtU4DS0ihsg3N9gzE210X1LJXT+dBUlO1DPjBckiWgwP680C89IKRxlQW0$pdkrKzyYRQLm07ZyU5T0wJS4FaxPQLg2j29XMF4ptY8hYH+eQ0XQDY89mdKFHBPZF5D6NDeynXqd2dhS7nDeaN7p',
+  userInput = 'I have a really great password.';
+
+pw.verify(storedHash, userInput, function (err, isValid) {
+  var msg;
+  if (err) { throw err; }
+  msg = isValid ? 'Passwords match!' : 'Wrong password.';
+  console.log(msg);
+});
+```
 
 ## API
 
