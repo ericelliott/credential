@@ -1,8 +1,9 @@
 /**
  * credential
  *
- * Fortify your user's passwords against rainbow table and
- * brute force attacks using Node's built in crypto functions.
+ * Fortify your user's passwords against rainbow table,
+ * brute force, and variable hash time attacks using Node's
+ * built in crypto functions.
  *
  * Employs cryptographically secure, password unique salts to
  * prevent rainbow table attacks.

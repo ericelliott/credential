@@ -1,6 +1,6 @@
 {
   "name": "credential",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Fortify your user's passwords against rainbow table and brute force attacks using Node's built in crypto functions to do key stretching and strong unique salts.",
   "main": "credential.js",
   "directories": {

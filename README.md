@@ -1,6 +1,6 @@
 # Credential
 
-Fortify your user's passwords against rainbow table and brute force attacks using Node's built in crypto functions.
+Fortify your user's passwords against rainbow table, brute force, and variable hash time attacks attacks using Node's built in crypto functions.
 
 Employs cryptographically secure, per password salts to prevent rainbow table attacks.
 
@@ -121,5 +121,16 @@ A brute force attack will attempt to crack a password by attempting a match usin
 One way to thwart brute force attacks is to programatically lock a user's account after a handful of failed login attempts. However, that strategy won't protect passwords if an attacker gains access to the password database.
 
 Key stretching can make brute force attacks impractical by increasing the time it takes to hash the password. This can be done by applying the hash function in a loop. The delay will be relatively unnoticed by a user trying to sign in, but will significantly hamper an attacker attempting to discover a password through brute force.
+
+
+### Variable vs constant time equality
+
+If it takes your service longer to say no to a slightly wrong password than a mostly wrong password, attackers can use that data to guess the password, similar to how you guess a word playing hangman. No, random time delays and network timing jitter don't help:
+
+From Crosby et al. "Opportunities And Limits Of Remote Timing Attacks":
+
+> We have shown that, even though the Internet induces significant timing jitter, we can reliably distinguish remote timing differences as low as 20µs. A LAN environment has lower timing jitter, allowing us to reliably distinguish remote timing differences as small as 100ns (possibly even smaller). These precise timing differences can be distinguished with only hundreds or possibly thousands of measurements.
+
+The best way to beat these attacks is to use a constant time hash equality check, rather than an optimized check. That is easily achieved by iterating through the full hash before returning the answer, regardless of how soon the answer is known.
 
 *Created by Eric Elliott for the book, "Programming JavaScript Applications" (O'Reilly)*
