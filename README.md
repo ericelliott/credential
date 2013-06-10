@@ -84,11 +84,16 @@ Several other libraries claim to do the same thing, but fall short. Several fail
 
 Others fail to use key stretching, or fail to use enough iterations (taking into account processor speeds, and clustered attacks, while balancing that against user experience).
 
-The hash should be sufficiently long not just to prevent an attack from a single machine, but to prevent an attack from a large cluster of machines.
 
 ## Background
 
 Passwords should be stored with a one way encryption hash, so that even if a malicious intruder obtains access to the user database, they still won't have access to user passwords.
+
+The hash should be sufficiently long not just to prevent an attack from a single machine, but to prevent an attack from a large cluster of machines.
+
+Worms targeting vulnerable versions of popular website platforms such as WordPress and Drupal have become common. Once such a worm takes control of a website and installs its payload, it can recruit all of the site's traffic into a JavaScript botnet, and, among other things, use visitor CPU power to crack hundreds of thousands of hashes per second from stolen password databases which fail to implement the security precautions outlined here.
+
+There are botnets that exist today with [over 90,000 nodes](http://www.forbes.com/sites/anthonykosner/2013/04/13/wordpress-under-attack-how-to-avoid-the-coming-botnet/). Such botnets could crack MD5 password hashes at a rate of nine billion per second.
 
 Passwords are vulnerable to the following common attacks:
 
@@ -100,7 +105,9 @@ Passwords are vulnerable to the following common attacks:
 
 Rainbow tables are precomputed tables used to look up passwords using stolen hashes. Once bad guys get their hands on user passwords, they'll attempt to attack popular services such as email and bank accounts -- which spells very bad PR for your service.
 
-There are rainbow tables that exist today which can discover every possible password up to 12 characters. To prevent password theft by rainbow table, users should choose passwords of at least 14 characters. Sadly, such passwords are definitely not convenient, particularly on mobile devices. In other words, you should not rely on users to select appropriate passwords.
+There are [rainbow tables that exist today](http://www.codinghorror.com/blog/2007/09/rainbow-hash-cracking.html) which can discover almost every possible password up to 14 characters. To prevent password theft by rainbow table, users should choose [passwords of at least 14 characters](http://en.wikipedia.org/wiki/Rainbow_table). Sadly, such passwords are definitely not convenient, particularly on mobile devices. In other words, you should not rely on users to select appropriate passwords.
+
+Rainbow tables can significantly reduce the time it takes to find a password, at the cost of memory, but with terrabyte hard drives and gigabytes of RAM, it's a trade off that is easily made.
 
 
 #### Password Salts
@@ -116,16 +123,20 @@ Second: If two different users use the same password, the compromised password w
 
 ### Brute force
 
-A brute force attack will attempt to crack a password by attempting a match using every possible character combination.
+Rainbow tables get all the blogger attention, but Moore's Law is alive and well, and brute force has become a very real threat. Attackers are employing GPUs, super computing clusters that cost less than $2,000, and JavaScript botnets comprised of tens of thousands of browsers visiting infected websites.
+
+A brute force attack will attempt to crack a password by attempting a match using every possible character combination. A simple single-iteration hash can be tested at the rate of millions of hashes per second on modern systems.
 
 One way to thwart brute force attacks is to programatically lock a user's account after a handful of failed login attempts. However, that strategy won't protect passwords if an attacker gains access to the password database.
 
 Key stretching can make brute force attacks impractical by increasing the time it takes to hash the password. This can be done by applying the hash function in a loop. The delay will be relatively unnoticed by a user trying to sign in, but will significantly hamper an attacker attempting to discover a password through brute force.
 
+For example, I discovered 100 hashes in less than 1ms using a simple MD5 algorithm, and then tried the same thing with Node's built-in `crypto.pbkdf2()` function (HMAC-SHA1) set to 80,000 iterations. PBKDF2 took 15.4ms. To a user performing a single login attempt per response, the slow down is barely noticed, but it makes brute force impractical.
+
 
 ### Variable vs constant time equality
 
-If it takes your service longer to say no to a slightly wrong password than a mostly wrong password, attackers can use that data to guess the password, similar to how you guess a word playing hangman. No, random time delays and network timing jitter don't help:
+If it takes your service longer to say no to a slightly wrong password than a mostly wrong password, attackers can use that data to guess the password, similar to how you guess a word playing hangman. You might think that random time delays and network timing jitter would sufficiently mask those timing differences, but it turns out an attacker just needs to take more timing samples to filter out the noise and obtain statistically relevant timing data:
 
 From Crosby et al. "Opportunities And Limits Of Remote Timing Attacks":
 
