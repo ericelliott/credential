@@ -1,10 +1,8 @@
 # Credential
 
-Fortify your user's passwords against rainbow table, brute force, and variable hash time attacks attacks using Node's built in crypto functions.
+Easy password hashing and verification in Node. Protects against brute force, rainbow tables, and timing attacks.
 
-Employs cryptographically secure, per password salts to prevent rainbow table attacks.
-
-Key stretching is used to make brute force attacks impractical.
+Employs cryptographically secure, per password salts to prevent rainbow table attacks. Key stretching is used to make brute force attacks impractical. A constant time verification check prevents variable response time attacks.
 
 ## Installing
 
