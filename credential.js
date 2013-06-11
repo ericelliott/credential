@@ -36,14 +36,18 @@ var crypto = require('crypto'),
    * @param  {[type]}   salt
    * @param  {Function} callback err, buffer
    */
-  pbkdf2 = function pbkdf2(password, salt, callback) {
+  pbkdf2 = function pbkdf2(password, salt, iterations, keylength, callback) {
     crypto.pbkdf2(password, salt,
-      this.iterations, this.keylength, function (err, buff) {
+      iterations, keylength, function (err, hash) {
         if (err) {
           return callback(err);
         }
-        callback(null, buff.toString('base64'));
+        callback(null, new Buffer(hash).toString('base64'));
       });
+  },
+
+  hashMethods = {
+    pbkdf2: pbkdf2
   },
 
   /**
@@ -56,8 +60,8 @@ var crypto = require('crypto'),
    * @param  {Function} callback [description]
    * @return {[type]}            [description]
    */
-  createSalt = function createSalt(callback) {
-    crypto.randomBytes(this.keylength, function (err, buff) {
+  createSalt = function createSalt(keylength, callback) {
+    crypto.randomBytes(keylength, function (err, buff) {
       if (err) {
         return callback(err);
       }
@@ -77,22 +81,33 @@ var crypto = require('crypto'),
    */
   toHash = function toHash(password,
       callback) {
+    var hashMethod = this.hashMethod,
+      keylength = this.keylength,
+      iterations = this.iterations;
 
     // Create the salt
-    createSalt.call(this, function (err, salt) {
+    createSalt(keylength, function (err, salt) {
       if (err) {
         return callback(err);
       }
 
-      salt = salt.toString('base64');
-
       // Then create the hash
-      pbkdf2.call(this, password, salt, function (err, hash) {
+      hashMethods[hashMethod](password, salt,
+          iterations, keylength,
+          function (err, hash) {
+
         if (err) {
           return callback(err);
         }
 
-        callback(null, salt + '$' + hash.toString('base64'));
+        callback(null, JSON.stringify({
+          salt: salt,
+          hash: hash,
+          hashMethod: hashMethod,
+          iterations: iterations,
+          keylength: keylength
+        }));
+
       });
     }.bind(this));
   },
@@ -117,6 +132,14 @@ var crypto = require('crypto'),
     return result;
   },
 
+  parseHash = function parseHash(encodedHash) {
+    try {
+      return JSON.parse(encodedHash);
+    } catch (err) {
+      return err;
+    }
+  },
+
   /**
    * verify(hash, input, callback)
    *
@@ -129,15 +152,21 @@ var crypto = require('crypto'),
    * @param  {Function} callback callback(err, isValid)
    */
   verify = function verify(hash, input, callback) {
-    var oldHash = hash,
-      salt = hash.slice(0, 88);
+    var storedHash = parseHash(hash);
 
-    pbkdf2.call(this, input, salt, function (err, newHash) {
+    if (!hashMethods[storedHash.hashMethod]) {
+      return callback(new Error('Couldn\'t parse stored ' +
+        'hash.'));
+    }
+
+    hashMethods[storedHash.hashMethod](input, storedHash.salt, storedHash.iterations,
+        storedHash.keylength, function (err, newHash) {
+
       var result;
       if (err) {
         return callback(err);
       }
-      callback(null, constantEquals(salt + '$' + newHash, oldHash));
+      callback(null, constantEquals(newHash, storedHash.hash));
     });
   },
 
@@ -154,15 +183,18 @@ var crypto = require('crypto'),
    * @return {Object}         credential object
    */
   configure = function configure(options) {
-    var overrides = pick(options, ['keylength', 'iterations']);
-    mixIn(this, overrides);
+    mixIn(this, this.defaults, options);
     return this;
+  },
+
+  defaults = {
+    keylength: 66,
+    iterations: 80000,
+    hashMethod: 'pbkdf2'
   };
 
-module.exports = {
+module.exports = mixIn({}, defaults, {
   hash: toHash,
   verify: verify,
-  configure: configure,
-  keylength: 66,
-  iterations: 80000
-};
+  configure: configure
+});

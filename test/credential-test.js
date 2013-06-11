@@ -8,8 +8,8 @@ test('hash', function (t) {
     t.equal(typeof hash, 'string',
       'should produce a hash string.');
 
-    t.equal(hash.length, 177,
-      'should produce an 177 character hash string.');
+    t.ok(JSON.parse(hash).hash,
+      'should a json object representing the hash.');
 
     t.end();
   });
@@ -50,6 +50,9 @@ test('verify with right pw', function (t) {
 
   pw.hash(pass, function (err, storedHash) {
     pw.verify(storedHash, pass, function (err, isValid) {
+      t.error(err,
+        'should not cause error.');
+
       t.ok(isValid,
         'should return true for matching password.');
       t.end();
@@ -57,6 +60,21 @@ test('verify with right pw', function (t) {
   });
 
 });
+
+test('verify with broken stored hash', function (t) {
+  var pass = 'foo',
+    storedHash = 'aoeuntkh;kbanotehudil,.prcgidax$aoesnitd,riouxbx;qjkwmoeuicgr';
+
+  pw.verify(storedHash, pass, function (err, isValid) {
+
+    t.ok(err,
+      'should cause error.');
+
+    t.end();
+  });
+
+});
+
 
 test('verify with wrong pw', function (t) {
   var pass = 'foo';
@@ -73,17 +91,19 @@ test('verify with wrong pw', function (t) {
 
 
 test('overrides', function (t) {
+  var iterations = 1;
+  var keylength = 12;
   pw.configure({
-    iterations: 1,
-    keylength: 12
+    iterations: iterations,
+    keylength: keylength
   });
 
   pw.hash('foo', function (err, hash) {
 
-    t.equal(pw.iterations, 1,
+    t.equal(pw.iterations, iterations,
       'should allow iterations override');
 
-    t.equal(hash.length, 33,
+    t.equal(JSON.parse(hash).keylength, keylength,
       'should allow keylength override');
     t.end();
   });
