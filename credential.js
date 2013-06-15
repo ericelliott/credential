@@ -1,15 +1,17 @@
 /**
  * credential
  *
- * Fortify your user's passwords against rainbow table,
- * brute force, and variable hash time attacks using Node's
- * built in crypto functions.
+ * Easy password hashing and verification in Node.
+ * Protects against brute force, rainbow tables, and
+ * timing attacks.
  *
- * Employs cryptographically secure, password unique salts to
- * prevent rainbow table attacks.
+ * Cryptographically secure per-password salts prevent
+ * rainbow table attacks.
  *
- * Key stretching is used to make brute force attacks
- * impractical.
+ * Variable work unit key stretching prevents brute force.
+ *
+ * Constant time verification prevents hang man timing
+ * attacks.
  *
  * Created by Eric Elliott for the book,
  * "Programming JavaScript Applications" (O'Reilly)
@@ -32,13 +34,17 @@ var crypto = require('crypto'),
    * crypto.pbkdf2().
    *
    * Internet Engineering Task Force's RFC 2898
+   *
    * @param  {[type]}   password
    * @param  {[type]}   salt
    * @param  {Function} callback err, buffer
    */
-  pbkdf2 = function pbkdf2(password, salt, iterations, keylength, callback) {
+  pbkdf2 = function pbkdf2(password, salt, workUnits, workKey, keyLength, callback) {
+    var baseline = 1000,
+      iterations = (baseline + workKey) * workUnits;
+
     crypto.pbkdf2(password, salt,
-      iterations, keylength, function (err, hash) {
+      iterations, keyLength, function (err, hash) {
         if (err) {
           return callback(err);
         }
@@ -57,11 +63,12 @@ var crypto = require('crypto'),
    * use as a password salt using Node's built-in
    * crypto.randomBytes().
    *
+   * @param  {Numbre} keyLength  Number of bytes.
    * @param  {Function} callback [description]
    * @return {[type]}            [description]
    */
-  createSalt = function createSalt(keylength, callback) {
-    crypto.randomBytes(keylength, function (err, buff) {
+  createSalt = function createSalt(keyLength, callback) {
+    crypto.randomBytes(keyLength, function (err, buff) {
       if (err) {
         return callback(err);
       }
@@ -72,28 +79,38 @@ var crypto = require('crypto'),
   /**
    * toHash(password, callback)
    *
-   * Takes a new password and creates a unique salt and hash
-   * combination in the form `salt$hash`, suitable for storing
-   * in a single text field.
+   * Takes a new password and creates a unique hash. Passes
+   * a JSON encoded object to the callback.
    *
    * @param  {[type]}   password
    * @param  {Function} callback
    */
+  /**
+   * callback
+   * @param  {Error}   Error     Error or null
+   * @param  {JSON} hashObject
+   * @param  {String} hashObject.hash
+   * @param  {String} hashObject.salt
+   * @param  {Number} hashObject.keyLength Bytes in hash
+   * @param  {String} hashObject.hashMethod
+   * @param  {Number} hashObject.workUnits
+   */
   toHash = function toHash(password,
       callback) {
     var hashMethod = this.hashMethod,
-      keylength = this.keylength,
-      iterations = this.iterations;
+      keyLength = this.keyLength,
+      workUnits = this.workUnits,
+      workKey = this.workKey;
 
     // Create the salt
-    createSalt(keylength, function (err, salt) {
+    createSalt(keyLength, function (err, salt) {
       if (err) {
         return callback(err);
       }
 
       // Then create the hash
       hashMethods[hashMethod](password, salt,
-          iterations, keylength,
+          workUnits, workKey, keyLength,
           function (err, hash) {
 
         if (err) {
@@ -101,11 +118,11 @@ var crypto = require('crypto'),
         }
 
         callback(null, JSON.stringify({
-          salt: salt,
           hash: hash,
+          salt: salt,
+          keyLength: keyLength,
           hashMethod: hashMethod,
-          iterations: iterations,
-          keylength: keylength
+          workUnits: workUnits
         }));
 
       });
@@ -152,15 +169,17 @@ var crypto = require('crypto'),
    * @param  {Function} callback callback(err, isValid)
    */
   verify = function verify(hash, input, callback) {
-    var storedHash = parseHash(hash);
+    var storedHash = parseHash(hash),
+      workKey = this.workKey;
 
     if (!hashMethods[storedHash.hashMethod]) {
       return callback(new Error('Couldn\'t parse stored ' +
         'hash.'));
     }
 
-    hashMethods[storedHash.hashMethod](input, storedHash.salt, storedHash.iterations,
-        storedHash.keylength, function (err, newHash) {
+    hashMethods[storedHash.hashMethod](input, storedHash.salt,
+        storedHash.workUnits, workKey, storedHash.keyLength,
+        function (err, newHash) {
 
       var result;
       if (err) {
@@ -173,13 +192,19 @@ var crypto = require('crypto'),
   /**
    * configure(options)
    *
-   * Alter defaults for `keylength` or `iterations`.
-   * Warning: Decreasing these values can make your password
-   * database less secure.
+   * Alter settings or set your secret workKey. Workkey
+   * is a secret value between one and 999, required to verify
+   * passwords. This secret makes it harder to brute force
+   * passwords from a stolen database by obscuring the number
+   * of iterations required to test passwords.
+   *
+   * Warning: Decreasing `keyLength` or `work units`
+   * can make your password database less secure.
    *
    * @param  {Object} options Options object.
-   * @param  {Number} options.keylength
-   * @param  {Number} options.iterations
+   * @param  {Number} options.keyLength
+   * @param  {Number} options.workUnits
+   * @param  {Number} options.workKey secret
    * @return {Object}         credential object
    */
   configure = function configure(options) {
@@ -188,8 +213,9 @@ var crypto = require('crypto'),
   },
 
   defaults = {
-    keylength: 66,
-    iterations: 80000,
+    keyLength: 66,
+    workUnits: 60,
+    workKey: parseInt(process.env.credential_key, 10) || 388,
     hashMethod: 'pbkdf2'
   };
 

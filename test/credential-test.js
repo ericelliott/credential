@@ -89,21 +89,22 @@ test('verify with wrong pw', function (t) {
 
 });
 
-
 test('overrides', function (t) {
-  var iterations = 1;
-  var keylength = 12;
+  var workUnits = 60;
+  var workKey = 463;
+  var keyLength = 12;
   pw.configure({
-    iterations: iterations,
-    keylength: keylength
+    workUnits: workUnits,
+    workKey: workKey,
+    keyLength: keyLength
   });
 
   pw.hash('foo', function (err, hash) {
 
-    t.equal(pw.iterations, iterations,
-      'should allow iterations override');
+    t.equal(pw.workUnits, workUnits,
+      'should allow workUnits override');
 
-    t.equal(JSON.parse(hash).keylength, keylength,
+    t.equal(JSON.parse(hash).keyLength, keyLength,
       'should allow keylength override');
     t.end();
   });

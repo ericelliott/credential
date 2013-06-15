@@ -41,20 +41,26 @@ pw.verify(storedHash, userInput, function (err, isValid) {
 
 ## API
 
-### .hash()
+### .hash(password, callback) callback(err, hashJSON)
 
-`.hash(password, callback)`
-`callback(err, hash) // 'salt$hash'`
+Takes a new password and creates a unique hash. Passes a JSON encoded object to the callback.
 
-Takes a new password and creates a unique salt and hash combination in the form `'salt$hash'`, suitable for storing in a single text field.
-
-* @param {String} password  A password to hash encode.
+* @param  {[type]}   password
+* @param  {Function} callback
 
 
-### .verify()
+`callback`
 
-`.verify(hash, input, callback)`
-`callback(err, isValid)`
+* @param  {Error}   Error     Error or null
+* @param  {JSON} hashObject
+* @param  {String} hashObject.hash
+* @param  {String} hashObject.salt
+* @param  {Number} hashObject.keyLength Bytes in hash
+* @param  {String} hashObject.hashMethod
+* @param  {Number} hashObject.workUnits
+
+
+### .verify(hash, input, callback) callback(err, isValid)
 
 Takes a stored hash, password input from the user, and a callback, and determines whether or not the user's input matches the stored password.
 
@@ -65,15 +71,15 @@ Takes a stored hash, password input from the user, and a callback, and determine
 
 ### .configure(options)
 
-Alter defaults for `keylength` or `iterations`.
+Alter settings or set your secret workKey. Workkey is a secret value between one and 999, required to verify passwords. This secret makes it harder to brute force passwords from a stolen database by obscuring the number of iterations required to test passwords.
 
-**Warning:** Decreasing these values can make your password
-database less secure.
+Warning: Decreasing `keyLength` or `work units` can make your password database less secure.
 
-* @param  {Object} options
-* @param  {Number} options.keylength
-* @param  {Number} options.iterations
-* @return {Object} credential  the credential object
+* @param  {Object} options Options object.
+* @param  {Number} options.keyLength
+* @param  {Number} options.workUnits
+* @param  {Number} options.workKey secret
+* @return {Object}         credential object
 
 
 ## Motivation
