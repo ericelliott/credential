@@ -71,9 +71,9 @@ Takes a stored hash, password input from the user, and a callback, and determine
 
 ### .configure(options)
 
-Alter settings or set your secret workKey. Workkey is a secret value between one and 999, required to verify passwords. This secret makes it harder to brute force passwords from a stolen database by obscuring the number of iterations required to test passwords.
+Alter settings or set your secret `workKey`. The  `workKey` is a secret value between one and 999, required to verify passwords. This secret makes it harder to brute force passwords from a stolen database by obscuring the number of iterations required to test passwords.
 
-Warning: Decreasing `keyLength` or `work units` can make your password database less secure.
+Warning: Decreasing `keyLength` or `workUnits` can make your password database less secure.
 
 * @param  {Object} options Options object.
 * @param  {Number} options.keyLength
