@@ -49,7 +49,7 @@ Takes a new password and creates a unique hash. Passes a JSON encoded object to 
 * @param  {Function} callback
 
 
-`callback`
+#### callback(err, hashJSON)
 
 * @param  {Error}   Error     Error or null
 * @param  {JSON} hashObject
