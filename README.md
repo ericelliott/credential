@@ -28,7 +28,7 @@ pw.hash(newPassword, function (err, hash) {
 
 ```
 var pw = require('credential'),
-  storedHash = 'o/HsuUsd1bjV2malqmakJDjwV7uPSHFtU4DS0ihsg3N9gzE210X1LJXT+dBUlO1DPjBckiWgwP680C89IKRxlQW0$pdkrKzyYRQLm07ZyU5T0wJS4FaxPQLg2j29XMF4ptY8hYH+eQ0XQDY89mdKFHBPZF5D6NDeynXqd2dhS7nDeaN7p',
+  storedHash = '{"hash":"PJM0MHOz+qARffD4kJngkBlzGeR1U5ThUMx3aPW+qVokea7t5UhKXU8z8CTHTaf3MYLpnt/8dtdaCf7GxMUXr0cJ","salt":"oLfUniVJ9YcpNGzpAi8AQxzGzVBzC26AgsnmjNlEXWR6XGWl+08b+b5Px7jSebErDjkEuoovqkMpnk9D52gkA1M0","keyLength":66,"hashMethod":"pbkdf2","workUnits":60}',
   userInput = 'I have a really great password.';
 
 pw.verify(storedHash, userInput, function (err, isValid) {
