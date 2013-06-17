@@ -43,7 +43,7 @@ function testCredential(callback) {
         return callback(f);
       }
       check();
-    }, 15)
+    }, 0);
   }());
 }
 

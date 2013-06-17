@@ -95,7 +95,7 @@ Passwords should be stored with a one way encryption hash, so that even if a mal
 
 The hash should be sufficiently long not just to prevent an attack from a single machine, but to prevent an attack from a large cluster of machines.
 
-Worms targeting vulnerable versions of popular website platforms such as WordPress and Drupal have become common. Once such a worm takes control of a website and installs its payload, it can recruit all of the site's traffic into a JavaScript botnet, and, among other things, use visitor CPU power to crack hundreds of thousands of hashes per second from stolen password databases which fail to implement the security precautions outlined here.
+Worms targeting vulnerable versions of popular website platforms such as WordPress and Drupal have become common. Once such a worm takes control of a website and installs its payload, it can recruit all of the site's traffic into a JavaScript botnet, and, among other things, use visitor CPU power to crack stolen password databases which fail to implement the security precautions outlined here.
 
 There are botnets that exist today with [over 90,000 nodes](http://www.forbes.com/sites/anthonykosner/2013/04/13/wordpress-under-attack-how-to-avoid-the-coming-botnet/). Such botnets could crack MD5 password hashes at a rate of nine billion per second.
 
@@ -135,7 +135,7 @@ One way to thwart brute force attacks is to programatically lock a user's accoun
 
 Key stretching can make brute force attacks impractical by increasing the time it takes to hash the password. This can be done by applying the hash function in a loop. The delay will be relatively unnoticed by a user trying to sign in, but will significantly hamper an attacker attempting to discover a password through brute force.
 
-For example, I discovered 100 hashes in less than 1ms using a simple MD5 algorithm, and then tried the same thing with Node's built-in `crypto.pbkdf2()` function (HMAC-SHA1) set to 80,000 iterations. PBKDF2 took 15.4ms. To a user performing a single login attempt per response, the slow down is barely noticed, but it makes brute force impractical.
+For example, I discovered 100 hashes in less than 1ms using a simple MD5 algorithm, and then tried the same thing with Node's built-in `crypto.pbkdf2()` function (HMAC-SHA1) set to 80,000 iterations. PBKDF2 took 15.48 seconds. To a user performing a single login attempt per response, the slow down is barely noticed, but it slows brute force to a crawl.
 
 
 ### Variable vs constant time equality
