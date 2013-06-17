@@ -84,7 +84,7 @@ Warning: Decreasing `keyLength` or `workUnits` can make your password database l
 
 ## Motivation
 
-Several other libraries claim to do the same thing, but fall short. Several fail to use cryptographically secure salts, which make salt guessing possible. Others fail to use either a long enough salt, or a long enough hash. The salt should be the same size of the hash. No shorter, and no longer.
+Several other libraries claim to do the same thing, but fall short. Several fail to use cryptographically secure salts, which make salt guessing possible. Others fail to use either a long enough salt, or a long enough hash. The salt should be the same size as the hash. No shorter, and no longer.
 
 Others fail to use key stretching, or fail to use enough iterations (taking into account processor speeds, and clustered attacks, while balancing that against user experience).
 
