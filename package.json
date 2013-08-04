@@ -1,6 +1,6 @@
 {
   "name": "credential",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Easy password hashing and verification in Node. Protects against brute force, rainbow tables, and timing attacks.",
   "main": "credential.js",
   "directories": {
@@ -10,7 +10,10 @@
     "tape": "~1.0.4",
     "mout": "~0.6.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-jshint": "~0.6.2"
+  },
   "scripts": {
     "test": "node test/credential-test.js"
   },

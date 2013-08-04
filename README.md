@@ -66,7 +66,7 @@ Takes a stored hash, password input from the user, and a callback, and determine
 
 * @param  {String}   hash     A stored password hash
 * @param  {String}   input    User's password input
-* @param  {Function} callback callback(err, isValid)
+* @param  {Function} callback(err, isValid)
 
 
 ### .configure(options)
@@ -79,7 +79,7 @@ Warning: Decreasing `keyLength` or `workUnits` can make your password database l
 * @param  {Number} options.keyLength
 * @param  {Number} options.workUnits
 * @param  {Number} options.workKey secret
-* @return {Object}         credential object
+* @return {Object} credential object
 
 
 ## Motivation

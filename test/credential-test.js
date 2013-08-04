@@ -1,3 +1,4 @@
+'use strict';
 var test = require('tape'),
   pw = require('../credential.js');
 
@@ -65,7 +66,7 @@ test('verify with broken stored hash', function (t) {
   var pass = 'foo',
     storedHash = 'aoeuntkh;kbanotehudil,.prcgidax$aoesnitd,riouxbx;qjkwmoeuicgr';
 
-  pw.verify(storedHash, pass, function (err, isValid) {
+  pw.verify(storedHash, pass, function (err) {
 
     t.ok(err,
       'should cause error.');

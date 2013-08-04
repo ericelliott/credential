@@ -5,6 +5,7 @@
  * significantly delay a brute-force attack.
  */
 
+'use strict';
 var crypto = require('crypto'),
   pw = require('../credential.js');
 
@@ -20,7 +21,8 @@ function testMd5() {
       (Math.random()*Math.pow(36, 14)).toString(36)
     );
     console.log(hash.digest('base64'));
-  };
+  }
+
   return (new Date().getTime() - s);
 }
 
@@ -28,16 +30,19 @@ function testCredential(callback) {
   var i = 0,
     l = 100,
     d = 0,
-    s = new Date().getTime();
-  for (var i = 0; i < l; i++) {
-    pw.hash((Math.random()*Math.pow(36, 14)).toString(36),
-    function () {
+    s = new Date().getTime(),
+    inc = function () {
       d++;
-    });
+    };
+
+  for (i = 0; i < l; i++) {
+    pw.hash((Math.random()*Math.pow(36, 14)).toString(36),
+      inc);
   }
 
   (function check() {
     setTimeout(function () {
+      var f;
       if (d===l) {
         f = (new Date().getTime() -s);
         return callback(f);
@@ -50,4 +55,4 @@ function testCredential(callback) {
 module.exports = {
   testMd5: testMd5,
   testCredential: testCredential
-}
+};

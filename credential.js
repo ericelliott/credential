@@ -19,12 +19,13 @@
  * MIT license http://opensource.org/licenses/MIT
  */
 
+'use strict';
 var crypto = require('crypto'),
   mixIn = require('mout/object/mixIn'),
-  pick = require('mout/object/pick'),
 
   /**
-   * pbkdf2(password, salt, callback)
+   * pdkdf(password, salt, workUnits, workKey,
+   *   keyLength, callback) callback(err, hash)
    *
    * A standard to employ hashing and key stretching to
    * prevent rainbow table and brute-force attacks, even
@@ -33,13 +34,18 @@ var crypto = require('crypto'),
    * This function is a thin wrapper around Node's built-in
    * crypto.pbkdf2().
    *
-   * Internet Engineering Task Force's RFC 2898
-   *
-   * @param  {[type]}   password
-   * @param  {[type]}   salt
-   * @param  {Function} callback err, buffer
+   * See Internet Engineering Task Force RFC 2898
+   * 
+   * @param  {String}   password
+   * @param  {String}   salt
+   * @param  {Number}   workUnits
+   * @param  {Number}   workKey
+   * @param  {Number}   keyLength
+   * @param  {Function} callback
+   * @return {undefined}
    */
-  pbkdf2 = function pbkdf2(password, salt, workUnits, workKey, keyLength, callback) {
+  pbkdf2 = function pbkdf2(password, salt, workUnits,
+      workKey, keyLength, callback) {
     var baseline = 1000,
       iterations = (baseline + workKey) * workUnits;
 
@@ -57,15 +63,15 @@ var crypto = require('crypto'),
   },
 
   /**
-   * createSalt(callback)
+   * createSalt(keylength, callback) callback(err, salt)
    *
    * Generates a cryptographically secure random string for
    * use as a password salt using Node's built-in
    * crypto.randomBytes().
    *
-   * @param  {Numbre} keyLength  Number of bytes.
-   * @param  {Function} callback [description]
-   * @return {[type]}            [description]
+   * @param  {Number} keyLength
+   * @param  {Function} callback 
+   * @return {undefined}
    */
   createSalt = function createSalt(keyLength, callback) {
     crypto.randomBytes(keyLength, function (err, buff) {
@@ -77,7 +83,7 @@ var crypto = require('crypto'),
   },
 
   /**
-   * toHash(password, callback)
+   * toHash(password, callback) callback(err, hash)
    *
    * Takes a new password and creates a unique hash. Passes
    * a JSON encoded object to the callback.
@@ -87,13 +93,14 @@ var crypto = require('crypto'),
    */
   /**
    * callback
-   * @param  {Error}   Error     Error or null
-   * @param  {JSON} hashObject
+   * @param  {Error}  Error Error or null
+   * @param  {String} hashObject JSON string
    * @param  {String} hashObject.hash
    * @param  {String} hashObject.salt
-   * @param  {Number} hashObject.keyLength Bytes in hash
+   * @param  {Number} hashObject.keyLength
    * @param  {String} hashObject.hashMethod
    * @param  {Number} hashObject.workUnits
+   * @return {undefined}
    */
   toHash = function toHash(password,
       callback) {
@@ -134,6 +141,10 @@ var crypto = require('crypto'),
    *
    * Compare two strings, x and y with a constant-time
    * algorithm to prevent attacks based on timing statistics.
+   * 
+   * @param  {String} x
+   * @param  {String} y
+   * @return {Boolean}
    */
   constantEquals = function constantEquals(x, y) {
     var result = true,
@@ -157,15 +168,15 @@ var crypto = require('crypto'),
   },
 
   /**
-   * verify(hash, input, callback)
+   * verify(hash, input, callback) callback(err, isValid)
    *
    * Takes a stored hash, password input from the user,
    * and a callback, and determines whether or not the
    * user's input matches the stored password.
    *
-   * @param  {[type]}   hash     stored password hash
-   * @param  {[type]}   input    user's password input
-   * @param  {Function} callback callback(err, isValid)
+   * @param  {String}   hash stored JSON object
+   * @param  {String}   input user's password input
+   * @param  {Function} callback(err, isValid)
    */
   verify = function verify(hash, input, callback) {
     var storedHash = parseHash(hash),
@@ -180,7 +191,6 @@ var crypto = require('crypto'),
         storedHash.workUnits, workKey, storedHash.keyLength,
         function (err, newHash) {
 
-      var result;
       if (err) {
         return callback(err);
       }
@@ -191,7 +201,7 @@ var crypto = require('crypto'),
   /**
    * configure(options)
    *
-   * Alter settings or set your secret workKey. Workkey
+   * Alter settings or set your secret `workKey`. `Workkey`
    * is a secret value between one and 999, required to verify
    * passwords. This secret makes it harder to brute force
    * passwords from a stolen database by obscuring the number
@@ -204,7 +214,7 @@ var crypto = require('crypto'),
    * @param  {Number} options.keyLength
    * @param  {Number} options.workUnits
    * @param  {Number} options.workKey secret
-   * @return {Object}         credential object
+   * @return {Object} credential object
    */
   configure = function configure(options) {
     mixIn(this, this.defaults, options);
