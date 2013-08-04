@@ -132,13 +132,12 @@ var crypto = require('crypto'),
   /**
    * constantEquals(x, y)
    *
-   * Compare two equal-length hashes, x and y with a
-   * constant-time algorithm to prevent attacks based on
-   * timing statistics.
+   * Compare two strings, x and y with a constant-time
+   * algorithm to prevent attacks based on timing statistics.
    */
   constantEquals = function constantEquals(x, y) {
     var result = true,
-      length = y.length,
+      length = (x.length > y.length) ? x.length : y.length,
       i;
 
     for (i=0; i<length; i++) {
