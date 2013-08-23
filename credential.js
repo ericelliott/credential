@@ -109,6 +109,11 @@ var crypto = require('crypto'),
       workUnits = this.workUnits,
       workKey = this.workKey;
 
+    if (typeof(password) !== 'string' || password.length === 0) {
+      return callback(new Error('Password must be a ' +
+        ' non-empty string.'));
+    }
+
     // Create the salt
     createSalt(keyLength, function (err, salt) {
       if (err) {
@@ -185,6 +190,11 @@ var crypto = require('crypto'),
     if (!hashMethods[storedHash.hashMethod]) {
       return callback(new Error('Couldn\'t parse stored ' +
         'hash.'));
+    }
+    else if (typeof(input) !== 'string'
+      || input.length === 0) {
+        return callback(new Error('Input password must ' +
+          ' be a non-empty string.'));
     }
 
     hashMethods[storedHash.hashMethod](input, storedHash.salt,
