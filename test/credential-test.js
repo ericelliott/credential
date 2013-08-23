@@ -45,6 +45,34 @@ test('hash with same passwords', function (t) {
   });
 });
 
+test('hash with undefined password', function(t) {
+
+  try {
+    pw.hash(undefined, function(err, fooHash) {
+      t.ok(err,
+        'should cause error.');
+      t.end();
+    });
+  } catch (e) {
+    t.fail('should not throw');
+  }
+
+});
+
+test('hash with empty password', function(t) {
+
+  try {
+    pw.hash("", function(err, fooHash) {
+      t.ok(err,
+        'should cause error.');
+      t.end();
+    });
+  } catch (e) {
+    t.fail('should not throw');
+  }
+
+});
+
 
 test('verify with right pw', function (t) {
   var pass = 'foo';
@@ -86,6 +114,44 @@ test('verify with wrong pw', function (t) {
         'should return false for matching password.');
       t.end();
     });
+  });
+
+});
+
+test('verify with undefined password', function(t) {
+  var pass = 'foo';
+
+  pw.hash(pass, function (err, storedHash) {
+    try {
+      pw.verify(storedHash, undefined, function(err, isValid) {
+        t.ok(!isValid,
+          'should return false for matching password.');
+        t.ok(err,
+          'should cause error.');
+        t.end();
+      });
+    } catch (e) {
+      t.fail('should not throw');
+    }
+  });
+
+});
+
+test('verify with empty password', function(t) {
+  var pass = 'foo';
+  
+  pw.hash(pass, function (err, storedHash) {
+    try {
+      pw.verify(storedHash, "", function(err, isValid) {
+        t.ok(!isValid,
+          'should return false for matching password.');
+        t.ok(err,
+          'should cause error.');
+        t.end();
+      });
+    } catch (e) {
+      t.fail('should not throw');
+    }
   });
 
 });
