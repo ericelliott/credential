@@ -48,7 +48,7 @@ test('hash with same passwords', function (t) {
 test('hash with undefined password', function(t) {
 
   try {
-    pw.hash(undefined, function(err, fooHash) {
+    pw.hash(undefined, function(err) {
       t.ok(err,
         'should cause error.');
       t.end();
@@ -62,7 +62,7 @@ test('hash with undefined password', function(t) {
 test('hash with empty password', function(t) {
 
   try {
-    pw.hash("", function(err, fooHash) {
+    pw.hash("", function(err) {
       t.ok(err,
         'should cause error.');
       t.end();

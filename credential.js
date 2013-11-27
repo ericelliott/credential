@@ -109,7 +109,7 @@ var crypto = require('crypto'),
       workUnits = this.workUnits,
       workKey = this.workKey;
 
-    if (typeof(password) !== 'string' || password.length === 0) {
+    if (typeof (password) !== 'string' || password.length === 0) {
       return callback(new Error('Password must be a ' +
         ' non-empty string.'));
     }
@@ -191,8 +191,7 @@ var crypto = require('crypto'),
       return callback(new Error('Couldn\'t parse stored ' +
         'hash.'));
     }
-    else if (typeof(input) !== 'string'
-      || input.length === 0) {
+    else if (typeof (input) !== 'string' || input.length === 0) {
         return callback(new Error('Input password must ' +
           ' be a non-empty string.'));
     }
