@@ -24,6 +24,23 @@ pw.hash(newPassword, function (err, hash) {
 });
 ```
 
+Without callback:
+
+```js
+var pw = require('credential'),
+  co = require('co'),
+  newPassword = 'I have a really great password.';
+
+co(function*() {
+  try {
+    var hash = yield pw.hash(newPassword)
+    console.log('Store the password hash.', hash);
+  } catch (e) {
+    // handle error
+  }
+})();
+```
+
 ### .verify()
 
 ```
@@ -44,6 +61,7 @@ pw.verify(storedHash, userInput, function (err, isValid) {
 ### .hash(password, callback) callback(err, hashJSON)
 
 Takes a new password and creates a unique hash. Passes a JSON encoded object to the callback.
+If callback is omitted, a thunk is returned.
 
 * @param  {[type]}   password
 * @param  {Function} callback
@@ -63,6 +81,7 @@ Takes a new password and creates a unique hash. Passes a JSON encoded object to 
 ### .verify(hash, input, callback) callback(err, isValid)
 
 Takes a stored hash, password input from the user, and a callback, and determines whether or not the user's input matches the stored password.
+If callback is omitted, a thunk is returned.
 
 * @param  {String}   hash     A stored password hash
 * @param  {String}   input    User's password input
