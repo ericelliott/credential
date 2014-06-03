@@ -14,7 +14,7 @@ $ npm install --save credential
 
 ### .hash()
 
-```
+```js
 var pw = require('credential'),
   newPassword = 'I have a really great password.';
 
@@ -26,7 +26,7 @@ pw.hash(newPassword, function (err, hash) {
 
 ### .verify()
 
-```
+```js
 var pw = require('credential'),
   storedHash = '{"hash":"PJM0MHOz+qARffD4kJngkBlzGeR1U5ThUMx3aPW+qVokea7t5UhKXU8z8CTHTaf3MYLpnt/8dtdaCf7GxMUXr0cJ","salt":"oLfUniVJ9YcpNGzpAi8AQxzGzVBzC26AgsnmjNlEXWR6XGWl+08b+b5Px7jSebErDjkEuoovqkMpnk9D52gkA1M0","keyLength":66,"hashMethod":"pbkdf2","workUnits":60}',
   userInput = 'I have a really great password.';
