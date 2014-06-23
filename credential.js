@@ -104,6 +104,11 @@ var crypto = require('crypto'),
    */
   toHash = function toHash(password,
       callback) {
+    if (callback === undefined) {
+      return function thunk(callback) {
+        module.exports.hash(password, callback);
+      }
+    }
     var hashMethod = this.hashMethod,
       keyLength = this.keyLength,
       workUnits = this.workUnits,
@@ -184,6 +189,11 @@ var crypto = require('crypto'),
    * @param  {Function} callback(err, isValid)
    */
   verify = function verify(hash, input, callback) {
+    if (callback === undefined) {
+      return function thunk(callback) {
+        module.exports.verify(hash, input, callback);
+      }
+    }
     var storedHash = parseHash(hash),
       workKey = this.workKey;
 
