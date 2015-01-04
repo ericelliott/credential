@@ -11,6 +11,8 @@ I wrote this because I could not find an adequately secure password hashing libr
 
 It's a **really bad idea** to write a library like this one yourself -- even one that wraps pbkdf2 or a similar work unit spec. Every new API opens up new attack vectors. Older APIs have had time to be examined by security experts. Prior to publishing Credential, I had it reviewed by all the security experts I could find, and opened it up to peer review in public security forums. Be wary of any security library which has not had similar scrutiny.
 
+Also note that passwords alone are obsolete. If it's your ownly security it's only a matter of time before the black hats own your system. Please use multi-factor authentication.
+
 If you find a security flaw in this code, please [report it](https://github.com/ericelliott/credential/issues/new).
 
 
