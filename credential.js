@@ -152,16 +152,15 @@ var crypto = require('crypto'),
    * @return {Boolean}
    */
   constantEquals = function constantEquals(x, y) {
-    var result = true,
-      length = (x.length > y.length) ? x.length : y.length,
-      i;
-
-    for (i=0; i<length; i++) {
-      if (x.charCodeAt(i) !== y.charCodeAt(i)) {
-        result = false;
-      }
+    var result = (x.length === y.length ? 0 : 1),
+      length = Math.max(x.length, y.length),
+      xc, yc, i;
+    for (i=0; i < length; i++) {
+      xc = x.charCodeAt(i);
+      yc = y.charCodeAt(i);
+      result |= xc ^ yc
     }
-    return result;
+    return result === 0;
   },
 
   parseHash = function parseHash(encodedHash) {
@@ -240,5 +239,6 @@ var crypto = require('crypto'),
 module.exports = mixIn({}, defaults, {
   hash: toHash,
   verify: verify,
-  configure: configure
+  configure: configure,
+  constantEquals: constantEquals
 });
