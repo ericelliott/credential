@@ -223,6 +223,57 @@ test('expired with expiry in the past', function(t) {
 
 });
 
+test('constantEquals works', function (t) {
+  var ctc = require('../constantTimeCompare');
+  // Ensure the comparisons work as expected
+  t.ok(ctc("abc", "abc"), 'equality')
+  t.ok(ctc("", ""), 'equal empty')
+  t.ok(!ctc("a", ""), 'inequal 1-char')
+  t.ok(ctc("a", "a"), 'equal 1-char')
+  t.ok(!ctc("ab", "ac"), 'inequal 2-char')
+  t.ok(ctc("ab", "ab"), 'equal 2-char')
+  t.ok(!ctc("abc", "abC"), 'inequality - difference')
+  t.ok(!ctc("abc", "abcD"), 'inequality - addition')
+  t.ok(!ctc("abc", "ab"), 'inequality - missing')
+  t.end()
+})
+
+test('constantEquals exposes no timings', function (t) {
+  var ctc = require('../constantTimeCompare'),
+      ttest = require('ttest');
+  function randomInt(low, high) {
+    return Math.floor(Math.random() * (high - low) + low);
+  }
+  function timed_compare(a, b) {
+    var start = process.hrtime();
+    ctc(a, b);
+    return process.hrtime(start)[1];
+  }
+
+  var iterations = 2500,
+      results = {diff: [], equal: [], inequal: [],},
+      inputs = {
+        diff: ["abcd", "abcdefghijklmnopqrstuvwzyz"],
+        equal: ["abcdefghijklmnopqrstuvwzyz", "abcdefghijklmnopqrstuvwzyz"],
+        inequal: ["ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwzyz"]
+      },
+      test_types = ['equal', 'inequal', 'diff'];
+
+  for (var i = 0; i < iterations; i++) {
+    test = test_types[randomInt(0, 3)];
+    results[test].push(timed_compare.apply(null, inputs[test]));
+  }
+  // Our confidence is 99.999% that there is no variation of 15ns over the sample.
+  var opts = {mu: 15, alpha: 0.001};
+  var de = ttest(results.diff, results.equal, opts);
+  var di = ttest(results.diff, results.inequal, opts);
+  var ei = ttest(results.equal, results.inequal, opts);
+  t.ok(de.valid(), "ttest diff set is same as equal set")
+  t.ok(di.valid(), "ttest diff set is same as inequal set")
+  t.ok(ei.valid(), "ttest inequal set is same as equal set")
+  t.end()
+});
+
 test('overrides', function (t) {
   var workUnits = 50;
   var workKey = 463;
