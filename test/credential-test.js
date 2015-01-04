@@ -162,46 +162,32 @@ test('constantEquals', function (t) {
     pw.constantEquals(a, b);
     return process.hrtime(start)[1];
   }
+  var i,
+      equal_results = 0,
+      inequal_results = 0,
+      difflen_results = 0;
   // Ensure it works
   t.ok(pw.constantEquals("abc", "abc"), 'equality')
   t.ok(!pw.constantEquals("abc", "abC"), 'inequality - difference')
   t.ok(!pw.constantEquals("abc", "abcD"), 'inequality - addition')
   t.ok(!pw.constantEquals("abc", "ab"), 'inequality - missing')
 
-  // We use these three as "preloaders"; it seems to be about 3x 
-  // before the system settles to reliable timings.
-  timed_compare("", "abcdefghijklmnopqrstuvwxyz");
-  timed_compare("", "abcdefghijklmnopqrstuvwxyz");
-  timed_compare("", "abcdefghijklmnopqrstuvwxyz");
-
   // Ensure timing is sane
-  var durations = [
-    timed_compare("", "abcdefghijklmnopqrstuvwxyz"), // inequal, diff len
-    timed_compare("", "abcdefghijklmnopqrstuvwxyz"), // inequal, diff len
-    timed_compare("", "abcdefghijklmnopqrstuvwxyz"), // inequal, diff len 
-    timed_compare("", "abcdefghijklmnopqrstuvwxyz"), // inequal, diff len
-    timed_compare("", "abcdefghijklmnopqrstuvwxyz"), // inequal, diff len
-    timed_compare("", "abcdefghijklmnopqrstuvwxyz"), // inequal, diff len
-    timed_compare("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyZ"), // inequal, same len
-    timed_compare("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyZ"), // inequal, same len
-    timed_compare("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyZ"), // inequal, same len
-    timed_compare("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyZ"), // inequal, same len
-    timed_compare("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyZ"), // inequal, same len
-    timed_compare("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyZ"), // inequal, same len
-    timed_compare("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz"), // equal 
-    timed_compare("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz"), // equal
-    timed_compare("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz"), // equal
-    timed_compare("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz"), // equal
-    timed_compare("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz"), // equal
-    timed_compare("", "abcdefghijklmnopqrstuvwxyz"), // inequal, diff len
-    timed_compare("", "abcdefghijklmnopqrstuvwxyz"), // inequal, diff len
-    timed_compare("", "abcdefghijklmnopqrstuvwxyz"), // inequal, diff len 
-  ];
+  // Differing lengths
+  for (i = 0; i < 250; i++) {
+    difflen_results += timed_compare("abcd", "abcdefghijklmnopqrstuvwxyz");
+  }
 
-  var max = Math.max.apply(Math, durations);
-  var min = Math.min.apply(Math, durations);
-  var spread = max - min;
-  t.ok(spread < 50, spread + " < 50 nanoseconds spread")
+  for (i = 0; i < 250; i++) {
+    equal_results   += timed_compare("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz");
+  }
+
+  for (i = 0; i < 250; i++) {
+    inequal_results += timed_compare("abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  }
+
+  console.log("E", equal_results, "IE", inequal_results, "DL", difflen_results)
+  t.end()
 });
 
 

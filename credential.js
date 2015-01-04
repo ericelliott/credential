@@ -146,7 +146,13 @@ var crypto = require('crypto'),
    *
    * Compare two strings, x and y with a constant-time
    * algorithm to prevent attacks based on timing statistics.
-   * 
+   *
+   * This really ought to be in C; see:
+   *     https://github.com/joyent/node/issues/8560
+   *
+   * See also:
+   *     http://jsperf.com/constant-time-string-comparison
+   *     
    * @param  {String} x
    * @param  {String} y
    * @return {Boolean}
@@ -154,11 +160,15 @@ var crypto = require('crypto'),
   constantEquals = function constantEquals(x, y) {
     var result = (x.length === y.length ? 0 : 1),
       length = Math.max(x.length, y.length),
-      xc, yc, i;
-    for (i=0; i < length; i++) {
-      xc = x.charCodeAt(i);
-      yc = y.charCodeAt(i);
-      result |= xc ^ yc
+      pad_size = Math.min(x.length, y.length) - length,
+      i;
+    // Make the strings equal length so that the comparison is always
+    // between two strings. If charCodeAt returns NaN, then the
+    // comparison timing characteristics are revealing.
+    x += y.substr(x.length);
+    y += x.substr(y.length);
+    for (i = 0; i < length; i++) {
+      result = x.charCodeAt(i) ^ y.charCodeAt(i) | result;
     }
     return result === 0;
   },
