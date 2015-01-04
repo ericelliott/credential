@@ -11,7 +11,7 @@ I wrote this because I could not find an adequately secure password hashing libr
 
 It's a **really bad idea** to write a library like this one yourself -- even one that wraps pbkdf2 or a similar work unit spec. Every new API opens up new attack vectors. Older APIs have had time to be examined by security experts. Prior to publishing Credential, I had it reviewed by all the security experts I could find, and opened it up to peer review in public security forums. Be wary of any security library which has not had similar scrutiny.
 
-Also note that passwords alone are obsolete. If it's your ownly security it's only a matter of time before the black hats own your system. Please use multi-factor authentication.
+Also note that passwords alone are obsolete. If it's your only security, it's only a matter of time before the black hats own your system. Please use multi-factor authentication.
 
 If you find a security flaw in this code, please [report it](https://github.com/ericelliott/credential/issues/new).
 
@@ -123,7 +123,7 @@ Rainbow tables are precomputed tables used to look up passwords using stolen has
 
 There are [rainbow tables that exist today](http://www.codinghorror.com/blog/2007/09/rainbow-hash-cracking.html) which can discover almost every possible password up to 14 characters. To prevent password theft by rainbow table, users should choose [passwords of at least 14 characters](http://en.wikipedia.org/wiki/Rainbow_table). Sadly, such passwords are definitely not convenient, particularly on mobile devices. In other words, you should not rely on users to select appropriate passwords.
 
-Rainbow tables can significantly reduce the time it takes to find a password, at the cost of memory, but with terrabyte hard drives and gigabytes of RAM, it's a trade off that is easily made.
+Rainbow tables can significantly reduce the time it takes to find a password, at the cost of memory, but with terabyte hard drives and gigabytes of RAM, it's a trade off that is easily made.
 
 
 #### Password Salts
@@ -143,7 +143,7 @@ Rainbow tables get all the blogger attention, but Moore's Law is alive and well,
 
 A brute force attack will attempt to crack a password by attempting a match using every possible character combination. A simple single-iteration hash can be tested at the rate of millions of hashes per second on modern systems.
 
-One way to thwart brute force attacks is to programatically lock a user's account after a handful of failed login attempts. However, that strategy won't protect passwords if an attacker gains access to the password database.
+One way to thwart brute force attacks is to programmatically lock a user's account after a handful of failed login attempts. However, that strategy won't protect passwords if an attacker gains access to the password database.
 
 Key stretching can make brute force attacks impractical by increasing the time it takes to hash the password. This can be done by applying the hash function in a loop. The delay will be relatively unnoticed by a user trying to sign in, but will significantly hamper an attacker attempting to discover a password through brute force.
 
