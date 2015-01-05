@@ -163,6 +163,7 @@ test('constantEquals', function (t) {
     return process.hrtime(start)[1];
   }
   var i,
+      iterations = 25000,
       equal_results = 0,
       inequal_results = 0,
       difflen_results = 0;
@@ -174,19 +175,31 @@ test('constantEquals', function (t) {
 
   // Ensure timing is sane
   // Differing lengths
-  for (i = 0; i < 250; i++) {
+  for (i = 0; i < iterations; i++) {
     difflen_results += timed_compare("abcd", "abcdefghijklmnopqrstuvwxyz");
   }
 
-  for (i = 0; i < 250; i++) {
+  for (i = 0; i < iterations; i++) {
     equal_results   += timed_compare("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz");
   }
 
-  for (i = 0; i < 250; i++) {
+  for (i = 0; i < iterations; i++) {
     inequal_results += timed_compare("abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
   }
 
-  console.log("E", equal_results, "IE", inequal_results, "DL", difflen_results)
+  // This is a point of some statistical importance. A tolerance of 
+  // 0.05 is not actually particularly useful; it must be combined
+  // with the time-per-iteration and number of iterations to ensure
+  // that there is no statistically significant difference that
+  // illuminates what's happening in the comparison.
+  // 
+  // So `tolerance` here is really just a placeholder until a more
+  // sensible statistically sound comparison can be teased out of this test.
+  var tolerance = 0.05;
+  t.ok(Math.abs((equal_results - inequal_results)/equal_results) < tolerance,
+      "inequal and equal results within " + tolerance)
+  t.ok(Math.abs((equal_results - difflen_results)/equal_results) < tolerance, 
+    "differing-lengths and equal results within " + tolerance)
   t.end()
 });
 

@@ -19,7 +19,7 @@
  * MIT license http://opensource.org/licenses/MIT
  */
 
-'use strict';
+// 'use strict';
 var crypto = require('crypto'),
   mixIn = require('mout/object/mixIn'),
 
@@ -149,6 +149,7 @@ var crypto = require('crypto'),
    *
    * This really ought to be in C; see:
    *     https://github.com/joyent/node/issues/8560
+   *     http://stackoverflow.com/questions/18476402
    *
    * See also:
    *     http://jsperf.com/constant-time-string-comparison
@@ -157,20 +158,21 @@ var crypto = require('crypto'),
    * @param  {String} y
    * @return {Boolean}
    */
-  constantEquals = function constantEquals(x, y) {
-    var result = (x.length === y.length ? 0 : 1),
-      length = Math.max(x.length, y.length),
-      pad_size = Math.min(x.length, y.length) - length,
-      i;
-    // Make the strings equal length so that the comparison is always
-    // between two strings. If charCodeAt returns NaN, then the
-    // comparison timing characteristics are revealing.
-    x += y.substr(x.length);
-    y += x.substr(y.length);
-    for (i = 0; i < length; i++) {
-      result = x.charCodeAt(i) ^ y.charCodeAt(i) | result;
+  constantEquals = function constantEquals(a, b) {
+    // Using with{} nixes some V8 optimizations that would otherwise undermine
+    // our intentions here.
+    with({}) {
+      var aLen = a.length,
+          bLen = b.length,
+          match = aLen === bLen ? 1 : 0,
+          i = Math.max(aLen, bLen);
+      while (i--) {
+        // We repeat the comparison over the strings with % so that we do not compare
+        // a number to NaN, since that has different timing that comparing two numbers.
+        match &= a.charCodeAt( i % aLen ) === b.charCodeAt( i % bLen ) ? 1 : 0;
+      }
+      return match === 1;
     }
-    return result === 0;
   },
 
   parseHash = function parseHash(encodedHash) {
