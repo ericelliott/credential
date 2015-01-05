@@ -22,6 +22,7 @@
 // 'use strict';
 var crypto = require('crypto'),
   mixIn = require('mout/object/mixIn'),
+  constantTimeCompare = require('./constantTimeCompare'),
 
   /**
    * pdkdf(password, salt, workUnits, workKey,
@@ -141,40 +142,6 @@ var crypto = require('crypto'),
     }.bind(this));
   },
 
-  /**
-   * constantEquals(x, y)
-   *
-   * Compare two strings, x and y with a constant-time
-   * algorithm to prevent attacks based on timing statistics.
-   *
-   * This really ought to be in C; see:
-   *     https://github.com/joyent/node/issues/8560
-   *     http://stackoverflow.com/questions/18476402
-   *
-   * See also:
-   *     http://jsperf.com/constant-time-string-comparison
-   *     
-   * @param  {String} x
-   * @param  {String} y
-   * @return {Boolean}
-   */
-  constantEquals = function constantEquals(a, b) {
-    // Using with{} nixes some V8 optimizations that would otherwise undermine
-    // our intentions here.
-    with({}) {
-      var aLen = a.length,
-          bLen = b.length,
-          match = aLen === bLen ? 1 : 0,
-          i = Math.max(aLen, bLen);
-      while (i--) {
-        // We repeat the comparison over the strings with % so that we do not compare
-        // a number to NaN, since that has different timing that comparing two numbers.
-        match &= a.charCodeAt( i % aLen ) === b.charCodeAt( i % bLen ) ? 1 : 0;
-      }
-      return match === 1;
-    }
-  },
-
   parseHash = function parseHash(encodedHash) {
     try {
       return JSON.parse(encodedHash);
@@ -214,7 +181,7 @@ var crypto = require('crypto'),
       if (err) {
         return callback(err);
       }
-      callback(null, constantEquals(newHash, storedHash.hash));
+      callback(null, constantTimeCompare(newHash, storedHash.hash));
     });
   },
 
@@ -251,6 +218,5 @@ var crypto = require('crypto'),
 module.exports = mixIn({}, defaults, {
   hash: toHash,
   verify: verify,
-  configure: configure,
-  constantEquals: constantEquals
+  configure: configure
 });

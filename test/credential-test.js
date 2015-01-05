@@ -157,26 +157,28 @@ test('verify with empty password', function(t) {
 });
 
 test('constantEquals', function (t) {
+  var ctc = require('../constantTimeCompare');
+
   function timed_compare(a, b) {
     var start = process.hrtime();
-    pw.constantEquals(a, b);
+    ctc(a, b);
     return process.hrtime(start)[1];
   }
   var i,
-      iterations = 25000,
+      iterations = 5000,
       equal_results = 0,
       inequal_results = 0,
       difflen_results = 0;
   // Ensure it works
-  t.ok(pw.constantEquals("abc", "abc"), 'equality')
-  t.ok(pw.constantEquals("", ""), 'equal-empty')
-  t.ok(!pw.constantEquals("a", ""), 'inequal 1-char')
-  t.ok(pw.constantEquals("a", "a"), 'equal 1-char')
-  t.ok(!pw.constantEquals("ab", "ac"), 'inequal 2-char')
-  t.ok(pw.constantEquals("ab", "ab"), 'equal 2-char')
-  t.ok(!pw.constantEquals("abc", "abC"), 'inequality - difference')
-  t.ok(!pw.constantEquals("abc", "abcD"), 'inequality - addition')
-  t.ok(!pw.constantEquals("abc", "ab"), 'inequality - missing')
+  t.ok(ctc("abc", "abc"), 'equality')
+  t.ok(ctc("", ""), 'equal empty')
+  t.ok(!ctc("a", ""), 'inequal 1-char')
+  t.ok(ctc("a", "a"), 'equal 1-char')
+  t.ok(!ctc("ab", "ac"), 'inequal 2-char')
+  t.ok(ctc("ab", "ab"), 'equal 2-char')
+  t.ok(!ctc("abc", "abC"), 'inequality - difference')
+  t.ok(!ctc("abc", "abcD"), 'inequality - addition')
+  t.ok(!ctc("abc", "ab"), 'inequality - missing')
 
   // Ensure timing is sane
   // Differing lengths
