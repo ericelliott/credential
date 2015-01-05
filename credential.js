@@ -22,6 +22,7 @@
 'use strict';
 var crypto = require('crypto'),
   mixIn = require('mout/object/mixIn'),
+  constantTimeCompare = require('./constantTimeCompare'),
 
   /**
    * pdkdf(password, salt, workUnits, workKey,
@@ -141,29 +142,6 @@ var crypto = require('crypto'),
     }.bind(this));
   },
 
-  /**
-   * constantEquals(x, y)
-   *
-   * Compare two strings, x and y with a constant-time
-   * algorithm to prevent attacks based on timing statistics.
-   * 
-   * @param  {String} x
-   * @param  {String} y
-   * @return {Boolean}
-   */
-  constantEquals = function constantEquals(x, y) {
-    var result = true,
-      length = (x.length > y.length) ? x.length : y.length,
-      i;
-
-    for (i=0; i<length; i++) {
-      if (x.charCodeAt(i) !== y.charCodeAt(i)) {
-        result = false;
-      }
-    }
-    return result;
-  },
-
   parseHash = function parseHash(encodedHash) {
     try {
       return JSON.parse(encodedHash);
@@ -203,7 +181,7 @@ var crypto = require('crypto'),
       if (err) {
         return callback(err);
       }
-      callback(null, constantEquals(newHash, storedHash.hash));
+      callback(null, constantTimeCompare(newHash, storedHash.hash));
     });
   },
 

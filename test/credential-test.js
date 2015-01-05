@@ -156,6 +156,61 @@ test('verify with empty password', function(t) {
 
 });
 
+test('constantEquals', function (t) {
+  var ctc = require('../constantTimeCompare');
+
+  function timed_compare(a, b) {
+    var start = process.hrtime();
+    ctc(a, b);
+    return process.hrtime(start)[1];
+  }
+  var i,
+      iterations = 5000,
+      equal_results = 0,
+      inequal_results = 0,
+      difflen_results = 0;
+  // Ensure it works
+  t.ok(ctc("abc", "abc"), 'equality')
+  t.ok(ctc("", ""), 'equal empty')
+  t.ok(!ctc("a", ""), 'inequal 1-char')
+  t.ok(ctc("a", "a"), 'equal 1-char')
+  t.ok(!ctc("ab", "ac"), 'inequal 2-char')
+  t.ok(ctc("ab", "ab"), 'equal 2-char')
+  t.ok(!ctc("abc", "abC"), 'inequality - difference')
+  t.ok(!ctc("abc", "abcD"), 'inequality - addition')
+  t.ok(!ctc("abc", "ab"), 'inequality - missing')
+
+  // Ensure timing is sane
+  // Differing lengths
+  for (i = 0; i < iterations; i++) {
+    difflen_results += timed_compare("abcd", "abcdefghijklmnopqrstuvwxyz");
+  }
+
+  for (i = 0; i < iterations; i++) {
+    equal_results   += timed_compare("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz");
+  }
+
+  for (i = 0; i < iterations; i++) {
+    inequal_results += timed_compare("abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  }
+
+  // This is a point of some statistical importance. A tolerance of 
+  // 0.05 is not actually particularly useful; it must be combined
+  // with the time-per-iteration and number of iterations to ensure
+  // that there is no statistically significant difference that
+  // illuminates what's happening in the comparison.
+  // 
+  // So `tolerance` here is really just a placeholder until a more
+  // sensible statistically sound comparison can be teased out of this test.
+  var tolerance = 0.05;
+  t.ok(Math.abs((equal_results - inequal_results)/equal_results) < tolerance,
+      "inequal and equal results within " + tolerance)
+  t.ok(Math.abs((equal_results - difflen_results)/equal_results) < tolerance, 
+      "differing-lengths and equal results within " + tolerance)
+  t.end()
+});
+
+
 test('overrides', function (t) {
   var workUnits = 60;
   var workKey = 463;
