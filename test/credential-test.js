@@ -169,6 +169,11 @@ test('constantEquals', function (t) {
       difflen_results = 0;
   // Ensure it works
   t.ok(pw.constantEquals("abc", "abc"), 'equality')
+  t.ok(pw.constantEquals("", ""), 'equal-empty')
+  t.ok(!pw.constantEquals("a", ""), 'inequal 1-char')
+  t.ok(pw.constantEquals("a", "a"), 'equal 1-char')
+  t.ok(!pw.constantEquals("ab", "ac"), 'inequal 2-char')
+  t.ok(pw.constantEquals("ab", "ab"), 'equal 2-char')
   t.ok(!pw.constantEquals("abc", "abC"), 'inequality - difference')
   t.ok(!pw.constantEquals("abc", "abcD"), 'inequality - addition')
   t.ok(!pw.constantEquals("abc", "ab"), 'inequality - missing')
@@ -199,7 +204,7 @@ test('constantEquals', function (t) {
   t.ok(Math.abs((equal_results - inequal_results)/equal_results) < tolerance,
       "inequal and equal results within " + tolerance)
   t.ok(Math.abs((equal_results - difflen_results)/equal_results) < tolerance, 
-    "differing-lengths and equal results within " + tolerance)
+      "differing-lengths and equal results within " + tolerance)
   t.end()
 });
 
