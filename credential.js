@@ -19,7 +19,7 @@
  * MIT license http://opensource.org/licenses/MIT
  */
 
-// 'use strict';
+'use strict';
 var crypto = require('crypto'),
   mixIn = require('mout/object/mixIn'),
   constantTimeCompare = require('./constantTimeCompare'),
