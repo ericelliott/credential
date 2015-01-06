@@ -157,7 +157,7 @@ test('verify with empty password', function(t) {
 });
 
 test('overrides', function (t) {
-  var workUnits = 60;
+  var workUnits = 50;
   var workKey = 463;
   var keyLength = 12;
   pw.configure({
@@ -168,7 +168,7 @@ test('overrides', function (t) {
 
   pw.hash('foo', function (err, hash) {
 
-    t.equal(pw.workUnits, workUnits,
+    t.equal(JSON.parse(hash).workUnits, workUnits,
       'should allow workUnits override');
 
     t.equal(JSON.parse(hash).keyLength, keyLength,
