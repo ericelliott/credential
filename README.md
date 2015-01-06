@@ -85,12 +85,11 @@ Takes a stored hash, password input from the user, and a callback, and determine
 
 Alter settings.
 
-Warning: Decreasing `keyLength` or `workUnits` can make your password database less secure.
+Warning: Decreasing `keyLength` or `work` can make your password database less secure.
 
 * @param  {Object} options Options object.
 * @param  {Number} options.keyLength
-* @param  {Number} options.workUnits
-* @param  {Number} options.workKey
+* @param  {Number} options.work
 * @return {Object} credential object
 
 

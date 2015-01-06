@@ -156,53 +156,17 @@ test('verify with empty password', function(t) {
 
 });
 
-test('verify with legacy hash (default workKey)', function (t) {
-  var pass = 'foo',
-    storedHash = '{"hash":"y7rqv8KRSlZSlCyZHHMF/DJskppsa3/buewuvswqf6ISqYurNCBKCU41DC1BO+XYxb6OPWRIPAH2TiOK+CeEc42N","salt":"qkMhX7h8sH7MMUvkYaVXPmz7oXhs1CAjuxmNdj/WQCKUGNUBVLg/0rYY03mVsWoYRcVg/wD+tTGEcgesdMD1IfJl","keyLength":66,"hashMethod":"pbkdf2","workUnits":60}';
-
-  pw.verify(storedHash, pass, function (err, isValid) {
-    t.error(err,
-      'should not cause error.');
-
-    t.ok(isValid,
-      'should return true for matching password.');
-    t.end();
-  });
-});
-
-test('verify with legacy hash (custom workKey and workUnits)', function (t) {
-  var pass = 'foo',
-    storedHash = '{"hash":"k8WWmP2ROCeZiBVuIyi+EOFWwbIh2nPSncsSAi1PYNimGMrE51ynK5qJTIlNDCy3kqHBQpyl2NJ1wZ5hyX/wFRt1","salt":"UXnjqZ1cemn2fWFB0Pa/rgsEKkMIeTYulDOJrLA3km1A0903uud44cJt0zXbbsg8SYivGzpjWLJDUbH9Ym7xMC0o","keyLength":66,"hashMethod":"pbkdf2","workUnits":70}';
-
-  var originalWorkKey = pw.workKey;
-
-  pw.workKey = 400;
-
-  pw.verify(storedHash, pass, function (err, isValid) {
-    t.error(err,
-      'should not cause error.');
-
-    t.ok(isValid,
-      'should return true for matching password.');
-    t.end();
-  });
-
-  pw.workKey = originalWorkKey;
-});
-
 test('overrides', function (t) {
-  var workUnits = 50;
-  var workKey = 463;
+  var work = 0.5;
   var keyLength = 12;
   pw.configure({
-    workUnits: workUnits,
-    workKey: workKey,
+    work: work,
     keyLength: keyLength
   });
 
   pw.hash('foo', function (err, hash) {
 
-    t.equal(JSON.parse(hash).iterations, pw.iterations(workUnits / 60),
+    t.equal(JSON.parse(hash).iterations, pw.iterations(work),
       'should allow workUnits override');
 
     t.equal(JSON.parse(hash).keyLength, keyLength,

@@ -118,7 +118,7 @@ var crypto = require('crypto'),
       callback) {
     var hashMethod = this.hashMethod,
       keyLength = this.keyLength,
-      n = iterations(this.workUnits / 60);
+      n = iterations(this.work);
 
     if (typeof (password) !== 'string' || password.length === 0) {
       return callback(new Error('Password must be a ' +
@@ -206,7 +206,7 @@ var crypto = require('crypto'),
           ' be a non-empty string.'));
     }
 
-    var n = storedHash.iterations || (1000 + this.workKey) * storedHash.workUnits;
+    var n = storedHash.iterations;
 
     hashMethods[storedHash.hashMethod](input, storedHash.salt,
         n, storedHash.keyLength,
@@ -224,13 +224,12 @@ var crypto = require('crypto'),
    *
    * Alter settings.
    *
-   * Warning: Decreasing `keyLength` or `workUnits`
+   * Warning: Decreasing `keyLength` or `work`
    * can make your password database less secure.
    *
    * @param  {Object} options Options object.
    * @param  {Number} options.keyLength
-   * @param  {Number} options.workUnits
-   * @param  {Number} options.workKey
+   * @param  {Number} options.work
    * @return {Object} credential object
    */
   configure = function configure(options) {
@@ -240,8 +239,7 @@ var crypto = require('crypto'),
 
   defaults = {
     keyLength: 66,
-    workUnits: 60,
-    workKey: parseInt(process.env.credential_key, 10) || 388,
+    work: 1,
     hashMethod: 'pbkdf2'
   };
 
