@@ -81,6 +81,14 @@ Takes a stored hash, password input from the user, and a callback, and determine
 * @param  {Function} callback(err, isValid)
 
 
+### .expired(hash[, days = 90])
+
+Takes a stored hash and a number of days, and determines if the hash is older than the specified days.
+
+* @param  {String}   hash     A stored password hash
+* @param  {Number}   days     Days before expiry
+
+
 ### .configure(options)
 
 Alter settings.
