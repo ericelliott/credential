@@ -23,6 +23,10 @@
 var crypto = require('crypto'),
   mixIn = require('mout/object/mixIn'),
 
+  msPerDay = 24 * 60 * 60 * 1000,
+  msPerYear = 366 * msPerDay,
+  y2k = new Date(2000, 0, 1),
+
   /**
    * pdkdf(password, salt, iterations,
    *   keyLength, callback) callback(err, hash)
@@ -88,10 +92,26 @@ var crypto = require('crypto'),
    * @return {Number} iterations
    */
 
-  iterations = function iterations( work ){
-    var years = (new Date()).getFullYear() - 2000;
+  iterations = function iterations( work, base ){
+    var years = ((base || Date.now()) - y2k) / msPerYear;
 
     return Math.floor(1000 * Math.pow(2, years / 2) * work);
+  },
+
+  /**
+   * expired(hash)
+   *
+   * Checks if a hash is older than the amount of days.
+   *
+   * @param  {Number} hash
+   * @return {Number} days
+   */
+
+  expired = function expired( hash, days ){
+    var base = Date.now() - (days || 90) * msPerDay;
+    var minIterations = iterations(this.work, base);
+
+    return JSON.parse(hash).iterations < minIterations;
   },
 
   /**
@@ -246,6 +266,7 @@ var crypto = require('crypto'),
 module.exports = mixIn({}, defaults, {
   hash: toHash,
   verify: verify,
+  expired: expired,
   configure: configure,
   iterations: iterations
 });
