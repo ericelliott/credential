@@ -12,7 +12,8 @@
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-jshint": "~0.6.2",
-    "tape": "~1.0.4"
+    "tape": "~1.0.4",
+    "ttest": "^0.3.0"
   },
   "scripts": {
     "test": "node test/credential-test.js"

@@ -30,6 +30,7 @@ module.exports = function constantTimeCompare(a, b) {
   // Using with{} nixes some V8 optimizations that would otherwise undermine
   // our intentions here.
   with({}) {
+    // Add at least one character so that there's at least one thing to modulo over.
     a += " ";
     b += " ";
     var aLen = a.length,

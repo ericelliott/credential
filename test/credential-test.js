@@ -1,7 +1,6 @@
 'use strict';
 var test = require('tape'),
-  pw = require('../credential.js');
-
+    pw = require('../credential.js');
 test('hash', function (t) {
 
   pw.hash('foo', function (err, hash) {
@@ -156,20 +155,9 @@ test('verify with empty password', function(t) {
 
 });
 
-test('constantEquals', function (t) {
+test('constantEquals works', function (t) {
   var ctc = require('../constantTimeCompare');
-
-  function timed_compare(a, b) {
-    var start = process.hrtime();
-    ctc(a, b);
-    return process.hrtime(start)[1];
-  }
-  var i,
-      iterations = 5000,
-      equal_results = 0,
-      inequal_results = 0,
-      difflen_results = 0;
-  // Ensure it works
+  // Ensure the comparisons work as expected
   t.ok(ctc("abc", "abc"), 'equality')
   t.ok(ctc("", ""), 'equal empty')
   t.ok(!ctc("a", ""), 'inequal 1-char')
@@ -179,34 +167,42 @@ test('constantEquals', function (t) {
   t.ok(!ctc("abc", "abC"), 'inequality - difference')
   t.ok(!ctc("abc", "abcD"), 'inequality - addition')
   t.ok(!ctc("abc", "ab"), 'inequality - missing')
+  t.end()
+})
 
-  // Ensure timing is sane
-  // Differing lengths
-  for (i = 0; i < iterations; i++) {
-    difflen_results += timed_compare("abcd", "abcdefghijklmnopqrstuvwxyz");
+test('constantEquals exposes no timings', function (t) {
+  var ctc = require('../constantTimeCompare'),  
+      ttest = require('ttest');
+  function randomInt(low, high) {
+    return Math.floor(Math.random() * (high - low) + low);
+  }
+  function timed_compare(a, b) {
+    var start = process.hrtime();
+    ctc(a, b);
+    return process.hrtime(start)[1];
   }
 
-  for (i = 0; i < iterations; i++) {
-    equal_results   += timed_compare("abcdefghijklmnopqrstuvwxyz", "abcdefghijklmnopqrstuvwxyz");
-  }
+  var iterations = 2500,
+      results = {diff: [], equal: [], inequal: [],},
+      inputs = {
+        diff: ["abcd", "abcdefghijklmnopqrstuvwzyz"],
+        equal: ["abcdefghijklmnopqrstuvwzyz", "abcdefghijklmnopqrstuvwzyz"],
+        inequal: ["ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwzyz"]
+      },
+      test_types = ['equal', 'inequal', 'diff'];
 
-  for (i = 0; i < iterations; i++) {
-    inequal_results += timed_compare("abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  for (var i = 0; i < iterations; i++) {
+    test = test_types[randomInt(0, 3)];
+    results[test].push(timed_compare.apply(null, inputs[test]));
   }
-
-  // This is a point of some statistical importance. A tolerance of 
-  // 0.05 is not actually particularly useful; it must be combined
-  // with the time-per-iteration and number of iterations to ensure
-  // that there is no statistically significant difference that
-  // illuminates what's happening in the comparison.
-  // 
-  // So `tolerance` here is really just a placeholder until a more
-  // sensible statistically sound comparison can be teased out of this test.
-  var tolerance = 0.05;
-  t.ok(Math.abs((equal_results - inequal_results)/equal_results) < tolerance,
-      "inequal and equal results within " + tolerance)
-  t.ok(Math.abs((equal_results - difflen_results)/equal_results) < tolerance, 
-      "differing-lengths and equal results within " + tolerance)
+  // Our confidence is 99.999% that there is no variation of 15ns over the sample.
+  var opts = {mu: 15, alpha: 0.001};
+  var de = ttest(results.diff, results.equal, opts);
+  var di = ttest(results.diff, results.inequal, opts);
+  var ei = ttest(results.equal, results.inequal, opts);
+  t.ok(de.valid(), "ttest diff set is same as equal set")
+  t.ok(di.valid(), "ttest diff set is same as inequal set")
+  t.ok(ei.valid(), "ttest inequal set is same as equal set")
   t.end()
 });
 
