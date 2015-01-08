@@ -156,19 +156,50 @@ test('verify with empty password', function(t) {
 
 });
 
+test('expired with valid hash and default expiry', function(t) {
+  var pass = 'foo';
+
+  pw.hash(pass, function (err, storedHash) {
+    t.notOk(pw.expired(storedHash),
+      'should return false when expiry is default.');
+    t.end();
+  });
+
+});
+
+test('expired with short expiry', function(t) {
+  var pass = 'foo';
+
+  pw.hash(pass, function (err, storedHash) {
+    t.notOk(pw.expired(storedHash, 2),
+      'should return false when expiry is default.');
+    t.end();
+  });
+
+});
+
+test('expired with expiry in the past', function(t) {
+  var pass = 'foo';
+
+  pw.hash(pass, function (err, storedHash) {
+    t.ok(pw.expired(storedHash, -2),
+      'should return true when expiry is in the future.');
+    t.end();
+  });
+
+});
+
 test('overrides', function (t) {
-  var workUnits = 60;
-  var workKey = 463;
+  var work = 0.5;
   var keyLength = 12;
   pw.configure({
-    workUnits: workUnits,
-    workKey: workKey,
+    work: work,
     keyLength: keyLength
   });
 
   pw.hash('foo', function (err, hash) {
 
-    t.equal(pw.workUnits, workUnits,
+    t.equal(JSON.parse(hash).iterations, pw.iterations(work),
       'should allow workUnits override');
 
     t.equal(JSON.parse(hash).keyLength, keyLength,

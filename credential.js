@@ -8,7 +8,7 @@
  * Cryptographically secure per-password salts prevent
  * rainbow table attacks.
  *
- * Variable work unit key stretching prevents brute force.
+ * Key stretching prevents brute force.
  *
  * Constant time verification prevents hang man timing
  * attacks.
@@ -23,8 +23,12 @@
 var crypto = require('crypto'),
   mixIn = require('mout/object/mixIn'),
 
+  msPerDay = 24 * 60 * 60 * 1000,
+  msPerYear = 366 * msPerDay,
+  y2k = new Date(2000, 0, 1),
+
   /**
-   * pdkdf(password, salt, workUnits, workKey,
+   * pdkdf(password, salt, iterations,
    *   keyLength, callback) callback(err, hash)
    *
    * A standard to employ hashing and key stretching to
@@ -38,17 +42,13 @@ var crypto = require('crypto'),
    * 
    * @param  {String}   password
    * @param  {String}   salt
-   * @param  {Number}   workUnits
-   * @param  {Number}   workKey
+   * @param  {Number}   iterations
    * @param  {Number}   keyLength
    * @param  {Function} callback
    * @return {undefined}
    */
-  pbkdf2 = function pbkdf2(password, salt, workUnits,
-      workKey, keyLength, callback) {
-    var baseline = 1000,
-      iterations = (baseline + workKey) * workUnits;
-
+  pbkdf2 = function pbkdf2(password, salt, iterations,
+    keyLength, callback) {
     crypto.pbkdf2(password, salt,
       iterations, keyLength, function (err, hash) {
         if (err) {
@@ -83,6 +83,38 @@ var crypto = require('crypto'),
   },
 
   /**
+   * iterations(work)
+   *
+   * Computes iterations based on current year and a shifting
+   * factor.
+   *
+   * @param  {Number} work
+   * @return {Number} iterations
+   */
+
+  iterations = function iterations( work, base ){
+    var years = ((base || Date.now()) - y2k) / msPerYear;
+
+    return Math.floor(1000 * Math.pow(2, years / 2) * work);
+  },
+
+  /**
+   * expired(hash)
+   *
+   * Checks if a hash is older than the amount of days.
+   *
+   * @param  {Number} hash
+   * @return {Number} days
+   */
+
+  expired = function expired( hash, days ){
+    var base = Date.now() - (days || 90) * msPerDay;
+    var minIterations = iterations(this.work, base);
+
+    return JSON.parse(hash).iterations < minIterations;
+  },
+
+  /**
    * toHash(password, callback) callback(err, hash)
    *
    * Takes a new password and creates a unique hash. Passes
@@ -99,15 +131,14 @@ var crypto = require('crypto'),
    * @param  {String} hashObject.salt
    * @param  {Number} hashObject.keyLength
    * @param  {String} hashObject.hashMethod
-   * @param  {Number} hashObject.workUnits
+   * @param  {Number} hashObject.iterations
    * @return {undefined}
    */
   toHash = function toHash(password,
       callback) {
     var hashMethod = this.hashMethod,
       keyLength = this.keyLength,
-      workUnits = this.workUnits,
-      workKey = this.workKey;
+      n = iterations(this.work);
 
     if (typeof (password) !== 'string' || password.length === 0) {
       return callback(new Error('Password must be a ' +
@@ -122,7 +153,7 @@ var crypto = require('crypto'),
 
       // Then create the hash
       hashMethods[hashMethod](password, salt,
-          workUnits, workKey, keyLength,
+          n, keyLength,
           function (err, hash) {
 
         if (err) {
@@ -134,7 +165,7 @@ var crypto = require('crypto'),
           salt: salt,
           keyLength: keyLength,
           hashMethod: hashMethod,
-          workUnits: workUnits
+          iterations: n
         }));
 
       });
@@ -184,8 +215,7 @@ var crypto = require('crypto'),
    * @param  {Function} callback(err, isValid)
    */
   verify = function verify(hash, input, callback) {
-    var storedHash = parseHash(hash),
-      workKey = this.workKey;
+    var storedHash = parseHash(hash);
 
     if (!hashMethods[storedHash.hashMethod]) {
       return callback(new Error('Couldn\'t parse stored ' +
@@ -196,8 +226,10 @@ var crypto = require('crypto'),
           ' be a non-empty string.'));
     }
 
+    var n = storedHash.iterations;
+
     hashMethods[storedHash.hashMethod](input, storedHash.salt,
-        storedHash.workUnits, workKey, storedHash.keyLength,
+        n, storedHash.keyLength,
         function (err, newHash) {
 
       if (err) {
@@ -210,19 +242,14 @@ var crypto = require('crypto'),
   /**
    * configure(options)
    *
-   * Alter settings or set your secret `workKey`. `Workkey`
-   * is a secret value between one and 999, required to verify
-   * passwords. This secret makes it harder to brute force
-   * passwords from a stolen database by obscuring the number
-   * of iterations required to test passwords.
+   * Alter settings.
    *
-   * Warning: Decreasing `keyLength` or `work units`
+   * Warning: Decreasing `keyLength` or `work`
    * can make your password database less secure.
    *
    * @param  {Object} options Options object.
    * @param  {Number} options.keyLength
-   * @param  {Number} options.workUnits
-   * @param  {Number} options.workKey secret
+   * @param  {Number} options.work
    * @return {Object} credential object
    */
   configure = function configure(options) {
@@ -232,13 +259,14 @@ var crypto = require('crypto'),
 
   defaults = {
     keyLength: 66,
-    workUnits: 60,
-    workKey: parseInt(process.env.credential_key, 10) || 388,
+    work: 1,
     hashMethod: 'pbkdf2'
   };
 
 module.exports = mixIn({}, defaults, {
   hash: toHash,
   verify: verify,
-  configure: configure
+  expired: expired,
+  configure: configure,
+  iterations: iterations
 });

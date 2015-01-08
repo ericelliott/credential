@@ -40,7 +40,7 @@ pw.hash(newPassword, function (err, hash) {
 
 ```js
 var pw = require('credential'),
-  storedHash = '{"hash":"PJM0MHOz+qARffD4kJngkBlzGeR1U5ThUMx3aPW+qVokea7t5UhKXU8z8CTHTaf3MYLpnt/8dtdaCf7GxMUXr0cJ","salt":"oLfUniVJ9YcpNGzpAi8AQxzGzVBzC26AgsnmjNlEXWR6XGWl+08b+b5Px7jSebErDjkEuoovqkMpnk9D52gkA1M0","keyLength":66,"hashMethod":"pbkdf2","workUnits":60}',
+  storedHash = '{"hash":"gNofnhlBl36AdRyktwATxKoqWKa6hsIEzwCmW/YXN//7PtiJwCRbepV9fUKu0L9TJELCKoDiBy6rGM8ov7lg2yLY","salt":"yyN3KUzlr4KrKWMM2K3d2Ddxf8OTq+vkKG+mtnmQVIibxSJz8drfzkYzqcH0EM+PVKR/1nClRr/CPDuJsq+FOcIw","keyLength":66,"hashMethod":"pbkdf2","iterations":181019}',
   userInput = 'I have a really great password.';
 
 pw.verify(storedHash, userInput, function (err, isValid) {
@@ -69,7 +69,7 @@ Takes a new password and creates a unique hash. Passes a JSON encoded object to 
 * @param  {String} hashObject.salt
 * @param  {Number} hashObject.keyLength Bytes in hash
 * @param  {String} hashObject.hashMethod
-* @param  {Number} hashObject.workUnits
+* @param  {Number} hashObject.iterations
 
 
 ### .verify(hash, input, callback) callback(err, isValid)
@@ -81,16 +81,23 @@ Takes a stored hash, password input from the user, and a callback, and determine
 * @param  {Function} callback(err, isValid)
 
 
+### .expired(hash[, days = 90])
+
+Takes a stored hash and a number of days, and determines if the hash is older than the specified days.
+
+* @param  {String}   hash     A stored password hash
+* @param  {Number}   days     Days before expiry
+
+
 ### .configure(options)
 
-Alter settings or set your secret `workKey`. The  `workKey` is a secret value between one and 999, required to verify passwords. This secret makes it harder to brute force passwords from a stolen database by obscuring the number of iterations required to test passwords.
+Alter settings.
 
-Warning: Decreasing `keyLength` or `workUnits` can make your password database less secure.
+Warning: Decreasing `keyLength` or `work` can make your password database less secure.
 
 * @param  {Object} options Options object.
 * @param  {Number} options.keyLength
-* @param  {Number} options.workUnits
-* @param  {Number} options.workKey secret
+* @param  {Number} options.work
 * @return {Object} credential object
 
 
