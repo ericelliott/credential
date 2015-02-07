@@ -170,4 +170,4 @@ The best way to beat these attacks is to use a constant time hash equality check
 
 Read more from [Coda Hale's "A Lesson in Timing Attacks"](http://codahale.com/a-lesson-in-timing-attacks/).
 
-*Created by Eric Elliott for the book, ["Programming JavaScript Applications" (O'Reilly)](http://ericleads.com/javascript-applications/)*
+*Created by Eric Elliott for the book, ["Programming JavaScript Applications" (O'Reilly)](http://pjabook.com)*
