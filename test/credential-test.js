@@ -192,17 +192,17 @@ test('expired with expiry in the past', function(t) {
 test('constantEquals works', function (t) {
   var ctc = require('../constantTimeCompare');
   // Ensure the comparisons work as expected
-  t.ok(ctc("abc", "abc"), 'equality')
-  t.ok(ctc("", ""), 'equal empty')
-  t.ok(!ctc("a", ""), 'inequal 1-char')
-  t.ok(ctc("a", "a"), 'equal 1-char')
-  t.ok(!ctc("ab", "ac"), 'inequal 2-char')
-  t.ok(ctc("ab", "ab"), 'equal 2-char')
-  t.ok(!ctc("abc", "abC"), 'inequality - difference')
-  t.ok(!ctc("abc", "abcD"), 'inequality - addition')
-  t.ok(!ctc("abc", "ab"), 'inequality - missing')
-  t.end()
-})
+  t.ok(ctc("abc", "abc"), 'equality');
+  t.ok(ctc("", ""), 'equal empty');
+  t.ok(!ctc("a", ""), 'inequal 1-char');
+  t.ok(ctc("a", "a"), 'equal 1-char');
+  t.ok(!ctc("ab", "ac"), 'inequal 2-char');
+  t.ok(ctc("ab", "ab"), 'equal 2-char');
+  t.ok(!ctc("abc", "abC"), 'inequality - difference');
+  t.ok(!ctc("abc", "abcD"), 'inequality - addition');
+  t.ok(!ctc("abc", "ab"), 'inequality - missing');
+  t.end();
+});
 
 test('constantEquals exposes no timings', function (t) {
   var ctc = require('../constantTimeCompare'),
@@ -234,10 +234,10 @@ test('constantEquals exposes no timings', function (t) {
   var de = ttest(results.diff, results.equal, opts);
   var di = ttest(results.diff, results.inequal, opts);
   var ei = ttest(results.equal, results.inequal, opts);
-  t.ok(de.valid(), "ttest diff set is same as equal set")
-  t.ok(di.valid(), "ttest diff set is same as inequal set")
-  t.ok(ei.valid(), "ttest inequal set is same as equal set")
-  t.end()
+  t.ok(de.valid(), "ttest diff set is same as equal set");
+  t.ok(di.valid(), "ttest diff set is same as inequal set");
+  t.ok(ei.valid(), "ttest inequal set is same as equal set");
+  t.end();
 });
 
 test('overrides', function (t) {
