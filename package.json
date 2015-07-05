@@ -77,9 +77,9 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://github.com/dilvie/credential/issues"
+    "url": "https://github.com/ericelliott/credential/issues"
   },
   "pre-commit": [
-    "validate"
+    "lint"
   ]
 }
