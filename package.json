@@ -7,7 +7,7 @@
     "test": "test"
   },
   "dependencies": {
-    "mout": "~0.6.0"
+    "lodash": "^3.10.0"
   },
   "devDependencies": {
     "babel": "^5.6.14",
@@ -16,7 +16,7 @@
     "babel-plugin-object-assign": "^1.2.0",
     "blue-tape": "^0.1.9",
     "dependency-check": "^2.5.0",
-    "eslint": "^0.23.0",
+    "eslint": "^0.24.0",
     "eslint-loader": "^0.14.0",
     "faucet": "0.0.1",
     "isparta": "^3.0.3",
@@ -24,7 +24,7 @@
     "nsp": "^1.0.1",
     "precommit-hook": "^3.0.0",
     "rimraf": "^2.4.0",
-    "tape": "~1.0.4",
+    "tape": "~4.0.0",
     "ttest": "^0.3.0",
     "webpack": "^1.9.11"
   },
@@ -77,9 +77,9 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://github.com/dilvie/credential/issues"
+    "url": "https://github.com/ericelliott/credential/issues"
   },
   "pre-commit": [
-    "validate"
+    "lint"
   ]
 }
