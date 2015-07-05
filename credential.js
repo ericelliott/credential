@@ -21,7 +21,7 @@
 
 'use strict';
 var crypto = require('crypto'),
-  mixIn = require('mout/object/mixIn'),
+  lodash = require('lodash'),
   constantTimeCompare = require('./constantTimeCompare'),
 
   msPerDay = 24 * 60 * 60 * 1000,
@@ -215,6 +215,11 @@ var crypto = require('crypto'),
     });
   },
 
+  defaults = {
+    keyLength: 66,
+    work: 1,
+    hashMethod: 'pbkdf2'
+  },
   /**
    * configure(options)
    *
@@ -229,17 +234,10 @@ var crypto = require('crypto'),
    * @return {Object} credential object
    */
   configure = function configure (options) {
-    mixIn(this, this.defaults, options);
-    return this;
-  },
-
-  defaults = {
-    keyLength: 66,
-    work: 1,
-    hashMethod: 'pbkdf2'
+    return lodash.assign(defaults, options);
   };
 
-module.exports = mixIn({}, defaults, {
+module.exports = lodash.assign(defaults, {
   hash: toHash,
   verify: verify,
   expired: expired,
