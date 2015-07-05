@@ -45,10 +45,10 @@ test('hash with same passwords', function (t) {
   });
 });
 
-test('hash with undefined password', function(t) {
+test('hash with undefined password', function (t) {
 
   try {
-    pw.hash(undefined, function(err) {
+    pw.hash(undefined, function (err) {
       t.ok(err,
         'should cause error.');
       t.end();
@@ -59,10 +59,10 @@ test('hash with undefined password', function(t) {
 
 });
 
-test('hash with empty password', function(t) {
+test('hash with empty password', function (t) {
 
   try {
-    pw.hash("", function(err) {
+    pw.hash('', function (err) {
       t.ok(err,
         'should cause error.');
       t.end();
@@ -118,12 +118,12 @@ test('verify with wrong pw', function (t) {
 
 });
 
-test('verify with undefined password', function(t) {
+test('verify with undefined password', function (t) {
   var pass = 'foo';
 
   pw.hash(pass, function (err, storedHash) {
     try {
-      pw.verify(storedHash, undefined, function(err, isValid) {
+      pw.verify(storedHash, undefined, function (err, isValid) {
         t.ok(!isValid,
           'should return false for matching password.');
         t.ok(err,
@@ -137,12 +137,12 @@ test('verify with undefined password', function(t) {
 
 });
 
-test('verify with empty password', function(t) {
+test('verify with empty password', function (t) {
   var pass = 'foo';
-  
+
   pw.hash(pass, function (err, storedHash) {
     try {
-      pw.verify(storedHash, "", function(err, isValid) {
+      pw.verify(storedHash, '', function (err, isValid) {
         t.ok(!isValid,
           'should return false for matching password.');
         t.ok(err,
@@ -156,7 +156,7 @@ test('verify with empty password', function(t) {
 
 });
 
-test('expired with valid hash and default expiry', function(t) {
+test('expired with valid hash and default expiry', function (t) {
   var pass = 'foo';
 
   pw.hash(pass, function (err, storedHash) {
@@ -167,7 +167,7 @@ test('expired with valid hash and default expiry', function(t) {
 
 });
 
-test('expired with short expiry', function(t) {
+test('expired with short expiry', function (t) {
   var pass = 'foo';
 
   pw.hash(pass, function (err, storedHash) {
@@ -178,7 +178,7 @@ test('expired with short expiry', function(t) {
 
 });
 
-test('expired with expiry in the past', function(t) {
+test('expired with expiry in the past', function (t) {
   var pass = 'foo';
 
   pw.hash(pass, function (err, storedHash) {
@@ -192,36 +192,36 @@ test('expired with expiry in the past', function(t) {
 test('constantEquals works', function (t) {
   var ctc = require('../constantTimeCompare');
   // Ensure the comparisons work as expected
-  t.ok(ctc("abc", "abc"), 'equality')
-  t.ok(ctc("", ""), 'equal empty')
-  t.ok(!ctc("a", ""), 'inequal 1-char')
-  t.ok(ctc("a", "a"), 'equal 1-char')
-  t.ok(!ctc("ab", "ac"), 'inequal 2-char')
-  t.ok(ctc("ab", "ab"), 'equal 2-char')
-  t.ok(!ctc("abc", "abC"), 'inequality - difference')
-  t.ok(!ctc("abc", "abcD"), 'inequality - addition')
-  t.ok(!ctc("abc", "ab"), 'inequality - missing')
-  t.end()
-})
+  t.ok(ctc('abc', 'abc'), 'equality');
+  t.ok(ctc('', ''), 'equal empty');
+  t.ok(!ctc('a', ''), 'inequal 1-char');
+  t.ok(ctc('a', 'a'), 'equal 1-char');
+  t.ok(!ctc('ab', 'ac'), 'inequal 2-char');
+  t.ok(ctc('ab', 'ab'), 'equal 2-char');
+  t.ok(!ctc('abc', 'abC'), 'inequality - difference');
+  t.ok(!ctc('abc', 'abcD'), 'inequality - addition');
+  t.ok(!ctc('abc', 'ab'), 'inequality - missing');
+  t.end();
+});
 
 test('constantEquals exposes no timings', function (t) {
   var ctc = require('../constantTimeCompare'),
       ttest = require('ttest');
-  function randomInt(low, high) {
+  function randomInt (low, high) {
     return Math.floor(Math.random() * (high - low) + low);
   }
-  function timed_compare(a, b) {
+  function timed_compare (a, b) {
     var start = process.hrtime();
     ctc(a, b);
     return process.hrtime(start)[1];
   }
 
   var iterations = 2500,
-      results = {diff: [], equal: [], inequal: [],},
+      results = {diff: [], equal: [], inequal: []},
       inputs = {
-        diff: ["abcd", "abcdefghijklmnopqrstuvwzyz"],
-        equal: ["abcdefghijklmnopqrstuvwzyz", "abcdefghijklmnopqrstuvwzyz"],
-        inequal: ["ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwzyz"]
+        diff: ['abcd', 'abcdefghijklmnopqrstuvwzyz'],
+        equal: ['abcdefghijklmnopqrstuvwzyz', 'abcdefghijklmnopqrstuvwzyz'],
+        inequal: ['ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwzyz']
       },
       test_types = ['equal', 'inequal', 'diff'];
 
@@ -234,10 +234,10 @@ test('constantEquals exposes no timings', function (t) {
   var de = ttest(results.diff, results.equal, opts);
   var di = ttest(results.diff, results.inequal, opts);
   var ei = ttest(results.equal, results.inequal, opts);
-  t.ok(de.valid(), "ttest diff set is same as equal set")
-  t.ok(di.valid(), "ttest diff set is same as inequal set")
-  t.ok(ei.valid(), "ttest inequal set is same as equal set")
-  t.end()
+  t.ok(de.valid(), 'ttest diff set is same as equal set');
+  t.ok(di.valid(), 'ttest diff set is same as inequal set');
+  t.ok(ei.valid(), 'ttest inequal set is same as equal set');
+  t.end();
 });
 
 test('overrides', function (t) {

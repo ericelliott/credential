@@ -44,4 +44,4 @@ module.exports = function constantTimeCompare(a, b) {
     }
     return match === 1;
   }
-}
+};

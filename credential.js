@@ -40,7 +40,7 @@ var crypto = require('crypto'),
    * crypto.pbkdf2().
    *
    * See Internet Engineering Task Force RFC 2898
-   * 
+   *
    * @param  {String}   password
    * @param  {String}   salt
    * @param  {Number}   iterations
@@ -48,7 +48,7 @@ var crypto = require('crypto'),
    * @param  {Function} callback
    * @return {undefined}
    */
-  pbkdf2 = function pbkdf2(password, salt, iterations,
+  pbkdf2 = function pbkdf2 (password, salt, iterations,
     keyLength, callback) {
     crypto.pbkdf2(password, salt,
       iterations, keyLength, function (err, hash) {
@@ -71,10 +71,10 @@ var crypto = require('crypto'),
    * crypto.randomBytes().
    *
    * @param  {Number} keyLength
-   * @param  {Function} callback 
+   * @param  {Function} callback
    * @return {undefined}
    */
-  createSalt = function createSalt(keyLength, callback) {
+  createSalt = function createSalt (keyLength, callback) {
     crypto.randomBytes(keyLength, function (err, buff) {
       if (err) {
         return callback(err);
@@ -93,7 +93,7 @@ var crypto = require('crypto'),
    * @return {Number} iterations
    */
 
-  iterations = function iterations( work, base ){
+  iterations = function iterations (work, base){
     var years = ((base || Date.now()) - y2k) / msPerYear;
 
     return Math.floor(1000 * Math.pow(2, years / 2) * work);
@@ -108,7 +108,7 @@ var crypto = require('crypto'),
    * @return {Number} days
    */
 
-  expired = function expired( hash, days ){
+  expired = function expired (hash, days){
     var base = Date.now() - (days || 90) * msPerDay;
     var minIterations = iterations(this.work, base);
 
@@ -135,8 +135,7 @@ var crypto = require('crypto'),
    * @param  {Number} hashObject.iterations
    * @return {undefined}
    */
-  toHash = function toHash(password,
-      callback) {
+  toHash = function toHash (password, callback) {
     var hashMethod = this.hashMethod,
       keyLength = this.keyLength,
       n = iterations(this.work);
@@ -170,10 +169,10 @@ var crypto = require('crypto'),
         }));
 
       });
-    }.bind(this));
+    });
   },
 
-  parseHash = function parseHash(encodedHash) {
+  parseHash = function parseHash (encodedHash) {
     try {
       return JSON.parse(encodedHash);
     } catch (err) {
@@ -192,14 +191,13 @@ var crypto = require('crypto'),
    * @param  {String}   input user's password input
    * @param  {Function} callback(err, isValid)
    */
-  verify = function verify(hash, input, callback) {
+  verify = function verify (hash, input, callback) {
     var storedHash = parseHash(hash);
 
     if (!hashMethods[storedHash.hashMethod]) {
       return callback(new Error('Couldn\'t parse stored ' +
         'hash.'));
-    }
-    else if (typeof (input) !== 'string' || input.length === 0) {
+    } else if (typeof (input) !== 'string' || input.length === 0) {
         return callback(new Error('Input password must ' +
           ' be a non-empty string.'));
     }
@@ -230,7 +228,7 @@ var crypto = require('crypto'),
    * @param  {Number} options.work
    * @return {Object} credential object
    */
-  configure = function configure(options) {
+  configure = function configure (options) {
     mixIn(this, this.defaults, options);
     return this;
   },
