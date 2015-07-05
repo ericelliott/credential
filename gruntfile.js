@@ -4,23 +4,45 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: '<json:package.json>',
-    jshint: {
-      all: ['./*.js', './benchmarks/*.js', './test/*.js'],
-      options: {
-        curly: true,
-        eqeqeq: true,
-        immed: true,
-        latedef: true,
-        newcap: true,
-        nonew: true,
-        noarg: true,
-        sub: true,
-        undef: true,
-        unused: true,
-        eqnull: true,
-        node: true,
-        strict: true,
-        boss: false
+    jshint:{
+      one: {
+        src: ['./*.js', './benchmarks/*.js', './test/*.js', '!./constantTimeCompare.js'],
+        options: {
+          curly: true,
+          eqeqeq: true,
+          immed: true,
+          latedef: true,
+          newcap: true,
+          nonew: true,
+          noarg: true,
+          sub: true,
+          undef: true,
+          unused: true,
+          eqnull: true,
+          node: true,
+          strict: true,
+          boss: false,
+        }
+      },
+      two:{
+        src: ['./constantTimeCompare.js'],
+        options: {
+          curly: true,
+          eqeqeq: true,
+          immed: true,
+          latedef: true,
+          newcap: true,
+          nonew: true,
+          noarg: true,
+          sub: true,
+          undef: true,
+          unused: true,
+          eqnull: true,
+          node: true,
+          strict: false,
+          boss: false,
+          withstmt: true
+        }
       }
     }
   });

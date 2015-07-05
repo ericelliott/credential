@@ -13,10 +13,33 @@
     "grunt": "~0.4.1",
     "grunt-contrib-jshint": "~0.6.2",
     "tape": "~1.0.4",
-    "ttest": "^0.3.0"
+    "ttest": "^0.3.0",
+    "blue-tape": "^0.1.9",
+    "dependency-check": "^2.5.0",
+    "faucet": "0.0.1",
+    "isparta": "^3.0.3",
+    "node-libs-browser": "^0.5.2",
+    "nsp": "^1.0.1",
+    "precommit-hook": "^3.0.0",
+    "rimraf": "^2.4.0",
+    "webpack": "^1.9.11"
   },
   "scripts": {
-    "test": "node test/credential-test.js"
+    "test": "node test/credential-test.js",
+    "init": "rimraf .validate.json && rimraf .jshintrc",
+    "clean": "rimraf build",
+    "prebuild": "npm run clean",
+    "build": "SET NODE_ENV=production webpack && npm run build:min",
+    "build:min": "SET NODE_ENV=production MINIFY=1 webpack",
+    "start": "webpack --watch",
+    "cov": "npm run cov:clean",
+    "cov:clean": "rimraf coverage",
+    "prepublish": "npm run build",
+    "validate": "grunt test && npm run build && npm test",
+    "validate-dev": "grunt test && npm test | faucet",
+    "audit": "nsp package",
+    "precheck": "npm run validate",
+    "check": "npm run audit && npm outdated --depth 0"
   },
   "repository": {
     "type": "git",
@@ -50,5 +73,10 @@
   "readmeFilename": "README.md",
   "bugs": {
     "url": "https://github.com/dilvie/credential/issues"
-  }
+  },
+  "pre-commit": [
+    "lint",
+    "validate",
+    "test"
+  ]
 }
