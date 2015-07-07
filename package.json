@@ -7,13 +7,13 @@
     "test": "test"
   },
   "dependencies": {
-    "mout": "~0.6.0"
+    "mout": "0.11.0"
   },
   "devDependencies": {
-    "grunt": "~0.4.1",
-    "grunt-contrib-jshint": "~0.6.2",
-    "tape": "~1.0.4",
-    "ttest": "^0.3.0"
+    "grunt": "0.4.5",
+    "grunt-contrib-jshint": "0.11.2",
+    "tape": "4.0.0",
+    "ttest": "0.3.1"
   },
   "scripts": {
     "test": "node test/credential-test.js"
