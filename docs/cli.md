@@ -35,4 +35,4 @@ $ echo -n "my password" | credential hash - | credential verify - "my password"
 Verified
 ```
 
-Exit codes `0` and `1` is used to communicate verified or invalid as well.
+Exit codes `0` and `1` are used to communicate verified or invalid as well.
