@@ -54,7 +54,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:dilvie/credential.git"
+    "url": "git@github.com:ericelliott/credential.git"
   },
   "keywords": [
     "password",
@@ -83,7 +83,7 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://github.com/dilvie/credential/issues"
+    "url": "https://github.com/ericelliott/credential/issues"
   },
   "pre-commit": [
     "validate"
