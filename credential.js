@@ -110,7 +110,7 @@ var crypto = require('crypto'),
 
   expired = function expired (hash, days){
     var base = Date.now() - (days || 90) * msPerDay;
-    var minIterations = iterations(this.work, base);
+    var minIterations = iterations(module.exports.work, base);
 
     return JSON.parse(hash).iterations < minIterations;
   },
@@ -136,9 +136,9 @@ var crypto = require('crypto'),
    * @return {undefined}
    */
   toHash = function toHash (password, callback) {
-    var hashMethod = this.hashMethod,
-      keyLength = this.keyLength,
-      n = iterations(this.work);
+    var hashMethod = module.exports.hashMethod,
+      keyLength = module.exports.keyLength,
+      n = iterations(module.exports.work);
 
     if (typeof (password) !== 'string' || password.length === 0) {
       return callback(new Error('Password must be a ' +
@@ -229,8 +229,8 @@ var crypto = require('crypto'),
    * @return {Object} credential object
    */
   configure = function configure (options) {
-    mixIn(this, this.defaults, options);
-    return this;
+    mixIn(module.exports, module.exports.defaults, options);
+    return module.exports;
   },
 
   defaults = {
