@@ -258,3 +258,12 @@ test('overrides', function (t) {
     t.end();
   });
 });
+
+test('bind', function(t){
+
+    t.plan(1);
+
+    pw.hash.bind(this, 'foo', function(err){
+        t.ifError(err);
+    });
+});
