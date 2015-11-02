@@ -263,7 +263,7 @@ test('bind', function(t){
 
     t.plan(1);
 
-    pw.hash.bind(this, 'foo', function(err){
+    pw.hash.bind(null, 'foo', function(err){
         t.ifError(err);
-    });
+    })();
 });
