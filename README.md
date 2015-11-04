@@ -28,7 +28,8 @@ $ npm install --save credential
 ### .hash()
 
 ```js
-var pw = require('credential'),
+var credential = require('credential'),
+  pw = credential(),
   newPassword = 'I have a really great password.';
 
 pw.hash(newPassword, function (err, hash) {
@@ -40,7 +41,8 @@ pw.hash(newPassword, function (err, hash) {
 ### .verify()
 
 ```js
-var pw = require('credential'),
+var credential = require('credential'),
+  pw = credential(),
   storedHash = '{"hash":"gNofnhlBl36AdRyktwATxKoqWKa6hsIEzwCmW/YXN//7PtiJwCRbepV9fUKu0L9TJELCKoDiBy6rGM8ov7lg2yLY","salt":"yyN3KUzlr4KrKWMM2K3d2Ddxf8OTq+vkKG+mtnmQVIibxSJz8drfzkYzqcH0EM+PVKR/1nClRr/CPDuJsq+FOcIw","keyLength":66,"hashMethod":"pbkdf2","iterations":181019}',
   userInput = 'I have a really great password.';
 
@@ -54,7 +56,18 @@ pw.verify(storedHash, userInput, function (err, isValid) {
 
 ## API
 
-### .hash(password, callback) callback(err, hashJSON)
+### var pw = credential([options])
+
+Return an instance of credential
+
+Warning: Decreasing `keyLength` or `work` can make your password database less secure.
+
+* @param  {Object} options Options object.
+* @param  {Number} options.keyLength
+* @param  {Number} options.work
+* @return {Object} credential object
+
+### pw.hash(password, callback) callback(err, hashJSON)
 
 Takes a new password and creates a unique hash. Passes a JSON encoded object to the callback.
 
@@ -73,7 +86,7 @@ Takes a new password and creates a unique hash. Passes a JSON encoded object to 
 * @param  {Number} hashObject.iterations
 
 
-### .verify(hash, input, callback) callback(err, isValid)
+### pw.verify(hash, input, callback) callback(err, isValid)
 
 Takes a stored hash, password input from the user, and a callback, and determines whether or not the user's input matches the stored password.
 
@@ -82,24 +95,12 @@ Takes a stored hash, password input from the user, and a callback, and determine
 * @param  {Function} callback(err, isValid)
 
 
-### .expired(hash[, days = 90])
+### pw.expired(hash[, days = 90])
 
 Takes a stored hash and a number of days, and determines if the hash is older than the specified days.
 
 * @param  {String}   hash     A stored password hash
 * @param  {Number}   days     Days before expiry
-
-
-### .configure(options)
-
-Alter settings.
-
-Warning: Decreasing `keyLength` or `work` can make your password database less secure.
-
-* @param  {Object} options Options object.
-* @param  {Number} options.keyLength
-* @param  {Number} options.work
-* @return {Object} credential object
 
 
 ## CLI
