@@ -27,6 +27,12 @@ var crypto = require('crypto'),
   msPerDay = 24 * 60 * 60 * 1000,
   msPerYear = 366 * msPerDay,
   y2k = new Date(2000, 0, 1),
+  defaultOptions = {
+    keyLength: 66,
+    work: 1,
+    hashMethod: 'pbkdf2'
+  },
+
 
   /**
    * pdkdf(password, salt, iterations,
@@ -100,28 +106,33 @@ var crypto = require('crypto'),
   },
 
   /**
-   * expired(hash)
+   * isExpired(hash, days, work)
    *
    * Checks if a hash is older than the amount of days.
    *
-   * @param  {Number} hash
-   * @return {Number} days
+   * @param {Number} hash
+   * @param {Number} days
+   * @param {Number} work
+   * @return {bool}
    */
 
-  expired = function expired (hash, days){
+  isExpired = function isExpired (hash, days, work){
     var base = Date.now() - (days || 90) * msPerDay;
-    var minIterations = iterations(this.work, base);
+    var minIterations = iterations(work, base);
 
     return JSON.parse(hash).iterations < minIterations;
   },
 
   /**
-   * toHash(password, callback) callback(err, hash)
+   * toHash(password, hashMethod, keyLength, work, callback) callback(err, hash)
    *
    * Takes a new password and creates a unique hash. Passes
    * a JSON encoded object to the callback.
    *
    * @param  {[type]}   password
+   * @param  {String}   hashMethod
+   * @param  {Number}   keyLength
+   * @param  {Number}   work
    * @param  {Function} callback
    */
   /**
@@ -135,10 +146,8 @@ var crypto = require('crypto'),
    * @param  {Number} hashObject.iterations
    * @return {undefined}
    */
-  toHash = function toHash (password, callback) {
-    var hashMethod = this.hashMethod,
-      keyLength = this.keyLength,
-      n = iterations(this.work);
+  toHash = function toHash (password, hashMethod, keyLength, work, callback) {
+    var n = iterations(work);
 
     if (typeof (password) !== 'string' || password.length === 0) {
       return callback(new Error('Password must be a ' +
@@ -213,36 +222,21 @@ var crypto = require('crypto'),
       }
       callback(null, constantTimeCompare(newHash, storedHash.hash));
     });
-  },
-
-  /**
-   * configure(options)
-   *
-   * Alter settings.
-   *
-   * Warning: Decreasing `keyLength` or `work`
-   * can make your password database less secure.
-   *
-   * @param  {Object} options Options object.
-   * @param  {Number} options.keyLength
-   * @param  {Number} options.work
-   * @return {Object} credential object
-   */
-  configure = function configure (options) {
-    mixIn(this, this.defaults, options);
-    return this;
-  },
-
-  defaults = {
-    keyLength: 66,
-    work: 1,
-    hashMethod: 'pbkdf2'
   };
 
-module.exports = mixIn({}, defaults, {
-  hash: toHash,
-  verify: verify,
-  expired: expired,
-  configure: configure,
-  iterations: iterations
-});
+
+module.exports = function credential (opts) {
+
+  var options = mixIn({}, defaultOptions, opts);
+
+  return {
+    verify: verify,
+    iterations: iterations,
+    hash: function (password, callback) {
+      toHash(password, options.hashMethod, options.keyLength, options.work, callback);
+    },
+    expired: function (hash, days) {
+      return isExpired(hash, days, options.work);
+    }
+  };
+};

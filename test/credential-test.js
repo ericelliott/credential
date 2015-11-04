@@ -1,8 +1,10 @@
 'use strict';
 var test = require('tape'),
-  pw = require('../credential.js');
+  credential = require('../credential.js');
 
 test('hash', function (t) {
+
+  var pw = credential();
 
   pw.hash('foo', function (err, hash) {
 
@@ -19,6 +21,8 @@ test('hash', function (t) {
 
 test('hash with different passwords', function (t) {
 
+  var pw = credential();
+
   pw.hash('foo', function (err, fooHash) {
 
     pw.hash('bar', function (err, barHash) {
@@ -32,6 +36,8 @@ test('hash with different passwords', function (t) {
 });
 
 test('hash with same passwords', function (t) {
+
+  var pw = credential();
 
   pw.hash('foo', function (err, fooHash) {
 
@@ -47,6 +53,8 @@ test('hash with same passwords', function (t) {
 
 test('hash with undefined password', function (t) {
 
+  var pw = credential();
+
   try {
     pw.hash(undefined, function (err) {
       t.ok(err,
@@ -60,6 +68,8 @@ test('hash with undefined password', function (t) {
 });
 
 test('hash with empty password', function (t) {
+
+  var pw = credential();
 
   try {
     pw.hash('', function (err) {
@@ -75,7 +85,8 @@ test('hash with empty password', function (t) {
 
 
 test('verify with right pw', function (t) {
-  var pass = 'foo';
+  var pass = 'foo',
+      pw = credential();
 
   pw.hash(pass, function (err, storedHash) {
     pw.verify(storedHash, pass, function (err, isValid) {
@@ -92,7 +103,8 @@ test('verify with right pw', function (t) {
 
 test('verify with broken stored hash', function (t) {
   var pass = 'foo',
-    storedHash = 'aoeuntkh;kbanotehudil,.prcgidax$aoesnitd,riouxbx;qjkwmoeuicgr';
+    storedHash = 'aoeuntkh;kbanotehudil,.prcgidax$aoesnitd,riouxbx;qjkwmoeuicgr',
+    pw = credential();
 
   pw.verify(storedHash, pass, function (err) {
 
@@ -106,7 +118,8 @@ test('verify with broken stored hash', function (t) {
 
 
 test('verify with wrong pw', function (t) {
-  var pass = 'foo';
+  var pass = 'foo',
+      pw = credential();
 
   pw.hash(pass, function (err, storedHash) {
     pw.verify(storedHash, 'bar', function (err, isValid) {
@@ -119,7 +132,8 @@ test('verify with wrong pw', function (t) {
 });
 
 test('verify with undefined password', function (t) {
-  var pass = 'foo';
+  var pass = 'foo',
+      pw = credential();
 
   pw.hash(pass, function (err, storedHash) {
     try {
@@ -138,7 +152,8 @@ test('verify with undefined password', function (t) {
 });
 
 test('verify with empty password', function (t) {
-  var pass = 'foo';
+  var pass = 'foo',
+      pw = credential();
 
   pw.hash(pass, function (err, storedHash) {
     try {
@@ -157,7 +172,8 @@ test('verify with empty password', function (t) {
 });
 
 test('expired with valid hash and default expiry', function (t) {
-  var pass = 'foo';
+  var pass = 'foo',
+      pw = credential();
 
   pw.hash(pass, function (err, storedHash) {
     t.notOk(pw.expired(storedHash),
@@ -168,7 +184,8 @@ test('expired with valid hash and default expiry', function (t) {
 });
 
 test('expired with short expiry', function (t) {
-  var pass = 'foo';
+  var pass = 'foo',
+      pw = credential();
 
   pw.hash(pass, function (err, storedHash) {
     t.notOk(pw.expired(storedHash, 2),
@@ -179,7 +196,8 @@ test('expired with short expiry', function (t) {
 });
 
 test('expired with expiry in the past', function (t) {
-  var pass = 'foo';
+  var pass = 'foo',
+      pw = credential();
 
   pw.hash(pass, function (err, storedHash) {
     t.ok(pw.expired(storedHash, -2),
@@ -243,7 +261,8 @@ test('constantEquals exposes no timings', function (t) {
 test('overrides', function (t) {
   var work = 0.5;
   var keyLength = 12;
-  pw.configure({
+
+  var pw = credential({
     work: work,
     keyLength: keyLength
   });
