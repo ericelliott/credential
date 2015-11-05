@@ -55,36 +55,28 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:dilvie/credential.git"
+    "url": "git@github.com:ericelliott/credential.git"
   },
   "keywords": [
     "password",
     "passwords",
-    "salt",
-    "rainbow",
-    "table",
-    "brute",
-    "force",
-    "security",
-    "login",
+    "hash",
     "auth",
     "authorization",
-    "sign",
-    "in",
-    "log",
-    "in",
-    "key",
+    "authentication",
+    "security",
+    "login",
+    "sign in",
+    "salt",
+    "rainbow",
+    "brute",
     "stretching",
-    "PBKDF2",
-    "hash",
-    "password",
-    "hash"
+    "PBKDF2"
   ],
   "author": "Eric Elliott",
   "license": "MIT",
-  "readmeFilename": "README.md",
   "bugs": {
-    "url": "https://github.com/dilvie/credential/issues"
+    "url": "https://github.com/ericelliott/credential/issues"
   },
   "pre-commit": [
     "validate"
