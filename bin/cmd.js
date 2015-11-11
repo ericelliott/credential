@@ -32,13 +32,16 @@ program
 	.command('verify [hash] <password>')
 	.description('Verify password')
 	.action(function (hash, password){
-		credential().verify(stdin || hash, password, function (err, result){
+		credential().verify(stdin || hash, password, function (err, valid){
 			if (err){
 				return console.error(err);
 			}
 
-			console.log(result ? 'Verified' : 'Invalid');
-			process.exit(result ? 0 : 1);
+			if (!valid){
+				throw new Error('Invalid');
+			}
+
+			console.log('Verified');
 		});
 	});
 

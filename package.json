@@ -31,13 +31,13 @@
     "nsp": "^2.0.1",
     "precommit-hook": "^3.0.0",
     "rimraf": "^2.4.0",
-    "tape": "~1.0.4",
+    "tape": "^4.2.2",
     "ttest": "^0.3.0",
     "webpack": "^1.9.11"
   },
   "scripts": {
-    "test": "node test/credential-test.js",
-    "lint": "eslint credential.js test",
+    "test": "tape test/*-test.js",
+    "lint": "eslint credential.js test bin/cmd.js",
     "init": "rimraf .validate.json && rimraf .jshintrc",
     "clean": "rimraf build",
     "prebuild": "npm run clean",
