@@ -234,7 +234,7 @@ test('constantEquals exposes no timings', function (t) {
     return process.hrtime(start)[1];
   }
 
-  var iterations = 2500,
+  var iterations = parseInt(process.env.TIMING_TEST_ITERATIONS, 10) || 2500,
       results = {diff: [], equal: [], inequal: []},
       inputs = {
         diff: ['abcd', 'abcdefghijklmnopqrstuvwzyz'],
