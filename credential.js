@@ -22,6 +22,8 @@
 'use strict';
 var crypto = require('crypto'),
   mixIn = require('mout/object/mixIn'),
+  pify = require('pify'),
+  P = require('pinkie-promise'),
   constantTimeCompare = require('./constantTimeCompare'),
 
   msPerDay = 24 * 60 * 60 * 1000,
@@ -190,7 +192,7 @@ var crypto = require('crypto'),
   },
 
   /**
-   * verify(hash, input, callback) callback(err, isValid)
+   * verifyHash(hash, input, callback) callback(err, isValid)
    *
    * Takes a stored hash, password input from the user,
    * and a callback, and determines whether or not the
@@ -200,7 +202,7 @@ var crypto = require('crypto'),
    * @param  {String}   input user's password input
    * @param  {Function} callback(err, isValid)
    */
-  verify = function verify (hash, input, callback) {
+  verifyHash = function verifyHash (hash, input, callback) {
     var storedHash = parseHash(hash);
 
     if (!hashMethods[storedHash.hashMethod]) {
@@ -230,9 +232,19 @@ module.exports = function credential (opts) {
   var options = mixIn({}, defaultOptions, opts);
 
   return {
-    verify: verify,
+    verify: function (hash, input, callback) {
+      if (!callback) {
+        return pify(verifyHash, P)(hash, input);
+      }
+
+      verifyHash(hash, input, callback);
+    },
     iterations: iterations,
     hash: function (password, callback) {
+      if (!callback) {
+        return pify(toHash, P)(password, options.hashMethod, options.keyLength, options.work);
+      }
+
       toHash(password, options.hashMethod, options.keyLength, options.work, callback);
     },
     expired: function (hash, days) {

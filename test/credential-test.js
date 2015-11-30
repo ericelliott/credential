@@ -277,3 +277,22 @@ test('overrides', function (t) {
     t.end();
   });
 });
+
+test('verify with right pw using promise', function (t) {
+  var pass = 'foo',
+      pw = credential();
+
+  pw.hash(pass)
+  .then(function (storedHash) {
+    return pw.verify(storedHash, pass);
+  })
+  .then(function (isValid) {
+    t.ok(isValid,
+      'should return true for matching password.');
+    t.end();
+  })
+  .catch(function (err) {
+    t.error(err,
+      'should not cause error.');
+  });
+});

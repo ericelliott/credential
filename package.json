@@ -13,6 +13,8 @@
   "dependencies": {
     "commander": "^2.8.1",
     "mout": "~0.6.0",
+    "pify": "^2.3.0",
+    "pinkie-promise": "^2.0.0",
     "pluck-keys": "^0.0.4"
   },
   "devDependencies": {

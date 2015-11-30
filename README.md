@@ -67,32 +67,32 @@ Warning: Decreasing `keyLength` or `work` can make your password database less s
 * @param  {Number} options.work
 * @return {Object} credential object
 
-### pw.hash(password, callback) callback(err, hashJSON)
+### pw.hash(password[, callback]) callback(err, hashJSON)
 
 Takes a new password and creates a unique hash. Passes a JSON encoded object to the callback.
 
 * @param  {[type]}   password
-* @param  {Function} callback
+* @param  {Function} callback   If callback is not provided, hash returns a `Promise`
 
 
 #### callback(err, hashJSON)
 
-* @param  {Error}   Error     Error or null
-* @param  {JSON} hashObject
-* @param  {String} hashObject.hash
-* @param  {String} hashObject.salt
-* @param  {Number} hashObject.keyLength Bytes in hash
-* @param  {String} hashObject.hashMethod
-* @param  {Number} hashObject.iterations
+* @param  {Error}   Error                 Error or null
+* @param  {JSON}    hashObject
+* @param  {String}  hashObject.hash
+* @param  {String}  hashObject.salt
+* @param  {Number}  hashObject.keyLength  Bytes in hash
+* @param  {String}  hashObject.hashMethod
+* @param  {Number}  hashObject.iterations
 
 
-### pw.verify(hash, input, callback) callback(err, isValid)
+### pw.verify(hash, input[, callback]) callback(err, isValid)
 
 Takes a stored hash, password input from the user, and a callback, and determines whether or not the user's input matches the stored password.
 
-* @param  {String}   hash     A stored password hash
-* @param  {String}   input    User's password input
-* @param  {Function} callback(err, isValid)
+* @param  {String}   hash       A stored password hash
+* @param  {String}   input      User's password input
+* @param  {Function} callback   If callback is not provided, verify returns a `Promise`
 
 
 ### pw.expired(hash[, days = 90])
