@@ -27,8 +27,9 @@ var crypto = require('crypto'),
   constantTimeCompare = require('./constantTimeCompare'),
 
   msPerDay = 24 * 60 * 60 * 1000,
-  msPerYear = 366 * msPerDay,
+  msPerYear = 365.242199 * msPerDay,
   y2k = new Date(2000, 0, 1),
+  minimalMsSinceEpoch = (2016 - 1970) * msPerYear,
   defaultOptions = {
     keyLength: 66,
     work: 1,
@@ -71,6 +72,16 @@ var crypto = require('crypto'),
     pbkdf2: pbkdf2
   },
 
+  dateNow = function dateNow () {
+    var date = Date.now();
+
+    if (minimalMsSinceEpoch < date) {
+      return date;
+    }
+
+    return minimalMsSinceEpoch;
+  },
+
   /**
    * createSalt(keylength, callback) callback(err, salt)
    *
@@ -101,8 +112,8 @@ var crypto = require('crypto'),
    * @return {Number} iterations
    */
 
-  iterations = function iterations (work, base){
-    var years = ((base || Date.now()) - y2k) / msPerYear;
+  iterations = function iterations (work, base) {
+    var years = ((base || dateNow()) - y2k) / msPerYear;
 
     return Math.floor(1000 * Math.pow(2, years / 2) * work);
   },
@@ -119,7 +130,7 @@ var crypto = require('crypto'),
    */
 
   isExpired = function isExpired (hash, days, work){
-    var base = Date.now() - (days || 90) * msPerDay;
+    var base = dateNow() - (days || 90) * msPerDay;
     var minIterations = iterations(work, base);
 
     return JSON.parse(hash).iterations < minIterations;

@@ -296,3 +296,18 @@ test('verify with right pw using promise', function (t) {
       'should not cause error.');
   });
 });
+
+test('date to determine number of iteration can\'t be before 2016', function (t) {
+  var pw = credential();
+
+  var originalDateNow = Date.now;
+  Date.now = function () {
+    return 10;
+  };
+
+  var nbIterations = pw.iterations(1);
+  t.ok(nbIterations > 250000);
+
+  Date.now = originalDateNow;
+  t.end();
+});
