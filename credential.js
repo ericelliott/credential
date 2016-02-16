@@ -64,7 +64,7 @@ var crypto = require('crypto'),
         if (err) {
           return callback(err);
         }
-        callback(null, new Buffer(hash).toString('base64'));
+        callback(null, hash.toString('base64'));
       });
   },
 
