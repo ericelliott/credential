@@ -39,7 +39,7 @@ module.exports = function constantTimeCompare(a, b) {
       return false;
     }
     while (i--) {
-      match |= a.charCodeAt( i ) ^ b.charCodeAt( i % bLen );
+      match |= a.charCodeAt( i ) ^ b.charCodeAt( i );
     }
     return match === 0;
   }
