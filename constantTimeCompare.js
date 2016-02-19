@@ -30,18 +30,17 @@ module.exports = function constantTimeCompare(a, b) {
   // Using with{} nixes some V8 optimizations that would otherwise undermine
   // our intentions here.
   with({}) {
-    // Add at least one character so that there's at least one thing to modulo over.
-    a += " ";
-    b += " ";
     var aLen = a.length,
         bLen = b.length,
-        match = aLen === bLen ? 1 : 0,
+        match = 0,
         i = Math.max(aLen, bLen, MAX_KEY_CHARS);
-    while (i--) {
-      // We repeat the comparison over the strings with % so that we do not compare
-      // a number to NaN, since that has different timing that comparing two numbers.
-      match &= a.charCodeAt( i % aLen ) === b.charCodeAt( i % bLen ) ? 1 : 0;
+    // If the lengths don't match, the string doesn't match
+    if (aLen !== bLen) {
+      return false;
     }
-    return match === 1;
+    while (i--) {
+      match |= a.charCodeAt( i ) ^ b.charCodeAt( i % bLen );
+    }
+    return match === 0;
   }
 };
