@@ -36,7 +36,6 @@ var crypto = require('crypto'),
     hashMethod: 'pbkdf2'
   },
 
-
   /**
    * pdkdf(password, salt, iterations,
    *   keyLength, callback) callback(err, hash)
@@ -174,10 +173,7 @@ var crypto = require('crypto'),
       }
 
       // Then create the hash
-      hashMethods[hashMethod](password, salt,
-          n, keyLength,
-          function (err, hash) {
-
+      hashMethods[hashMethod](password, salt, n, keyLength, function (err, hash) {
         if (err) {
           return callback(err);
         }
@@ -220,23 +216,20 @@ var crypto = require('crypto'),
       return callback(new Error('Couldn\'t parse stored ' +
         'hash.'));
     } else if (typeof (input) !== 'string' || input.length === 0) {
-        return callback(new Error('Input password must ' +
-          ' be a non-empty string.'));
+      return callback(new Error('Input password must ' +
+        ' be a non-empty string.'));
     }
 
     var n = storedHash.iterations;
 
-    hashMethods[storedHash.hashMethod](input, storedHash.salt,
-        n, storedHash.keyLength,
-        function (err, newHash) {
-
+    hashMethods[storedHash.hashMethod](input, storedHash.salt, n, storedHash.keyLength, function (err, newHash) {
       if (err) {
         return callback(err);
       }
+
       callback(null, constantTimeCompare(newHash, storedHash.hash));
     });
   };
-
 
 module.exports = function credential (opts) {
 

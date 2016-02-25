@@ -83,7 +83,6 @@ test('hash with empty password', function (t) {
 
 });
 
-
 test('verify with right pw', function (t) {
   var pass = 'foo',
       pw = credential();
@@ -115,7 +114,6 @@ test('verify with broken stored hash', function (t) {
   });
 
 });
-
 
 test('verify with wrong pw', function (t) {
   var pass = 'foo',
