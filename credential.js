@@ -59,7 +59,7 @@ var crypto = require('crypto'),
   pbkdf2 = function pbkdf2 (password, salt, iterations,
     keyLength, callback) {
     crypto.pbkdf2(password, salt,
-      iterations, keyLength, function (err, hash) {
+      iterations, keyLength, 'SHA1', function (err, hash) {
         if (err) {
           return callback(err);
         }
@@ -163,7 +163,7 @@ var crypto = require('crypto'),
 
     if (typeof (password) !== 'string' || password.length === 0) {
       return callback(new Error('Password must be a ' +
-        ' non-empty string.'));
+        'non-empty string.'));
     }
 
     // Create the salt
@@ -217,7 +217,7 @@ var crypto = require('crypto'),
         'hash.'));
     } else if (typeof (input) !== 'string' || input.length === 0) {
       return callback(new Error('Input password must ' +
-        ' be a non-empty string.'));
+        'be a non-empty string.'));
     }
 
     var n = storedHash.iterations;
