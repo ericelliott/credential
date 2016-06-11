@@ -26,6 +26,7 @@ var crypto = require('crypto'),
   P = require('pinkie-promise'),
   constantTimeCompare = require('./constantTimeCompare'),
 
+  useDigest = process.versions.node.substr(0, 4) !== '0.10',
   msPerDay = 24 * 60 * 60 * 1000,
   msPerYear = 365.242199 * msPerDay,
   y2k = new Date(2000, 0, 1),
@@ -58,13 +59,19 @@ var crypto = require('crypto'),
    */
   pbkdf2 = function pbkdf2 (password, salt, iterations,
     keyLength, callback) {
-    crypto.pbkdf2(password, salt,
-      iterations, keyLength, 'SHA1', function (err, hash) {
-        if (err) {
-          return callback(err);
-        }
-        callback(null, hash.toString('base64'));
-      });
+    var argumentsList = [password, salt, iterations,
+      keyLength, 'SHA1', function (err, hash) {
+      if (err) {
+        return callback(err);
+      }
+      callback(null, hash.toString('base64'));
+    }];
+
+    if (!useDigest) {
+      argumentsList.splice(4, 1);
+    }
+
+    crypto.pbkdf2.apply(null, argumentsList);
   },
 
   hashMethods = {
