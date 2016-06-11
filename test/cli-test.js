@@ -91,10 +91,11 @@ test('cli - hash - no password', function (t){
   var stdin = execCli(['hash'], function (err, stdout, stderr){
     t.ifError(err);
 
-    var actual = stderr.trim();
-    var expected = '[Error: Password must be a  non-empty string.]';
+    var expected = /Error: Password must be a non-empty string/;
 
-    t.is(actual, expected);
+    t.throws(function (){
+      throw stderr;
+    }, expected, 'should throw non-empty string error');
 
     t.end();
   });
