@@ -92,9 +92,9 @@ test('cli - hash - no password', function (t){
     t.ifError(err);
 
     var actual = stderr.trim();
-    var expected = '[Error: Password must be a  non-empty string.]';
+    var expected = /Error: Password must be a non-empty string/;
 
-    t.is(actual, expected);
+    t.ok(expected.test(actual));
 
     t.end();
   });
