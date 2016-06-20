@@ -1,6 +1,6 @@
 {
   "name": "credential",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Easy password hashing and verification in Node. Protects against brute force, rainbow tables, and timing attacks.",
   "main": "credential.js",
   "directories": {
