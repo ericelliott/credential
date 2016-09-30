@@ -49,11 +49,11 @@ program
   .command('expired <hash> [days]')
   .description('Verify hash expiration')
   .action(function (hash, days){
-    var expired = credential().expired(stdin || hash, days)
+    var expired = credential().expired(stdin || hash, days);
     if (expired) {
       throw new Error('Expired');
     } else {
-      console.log('Not expired')
+      console.log('Not expired');
     }
   });
 
