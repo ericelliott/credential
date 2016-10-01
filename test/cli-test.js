@@ -142,6 +142,25 @@ test('cli - expired - stdin', function (t){
   });
 });
 
+test('cli - expired - without days argument', function (t){
+  credential().hash('password', function (err, hash){
+    t.ifError(err);
+
+    var stdin = execCli(['expired', hash], function (err, stdout){
+      t.ifError(err);
+
+      var actual = stdout.trim();
+      var expected = 'Not expired';
+
+      t.is(actual, expected);
+
+      t.end();
+    });
+
+    stdin.end();
+  });
+});
+
 var pseudoOldHash = '{"iterations": 0}';
 
 test('cli - expired - did expired', function (t){
