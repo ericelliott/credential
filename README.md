@@ -8,6 +8,10 @@ Employs cryptographically secure, per password salts to prevent rainbow table at
 
 ## Warning
 
+User password credential management is extremely risky and should not be attempted by most apps. Storing any user passwords on your servers is a threat to your user's personal and financial security. If it's an option at all, consider outsourcing your credential management to a service dedicated to user authentication.
+
+Companies with the resources to operate a full-time security staff with a red-team may need to handle their own credential management. Even then, you should stick to well tested libraries used by lots of people. Don't attempt to roll your own.
+
 I wrote this because I could not find an adequately secure password hashing library for Node.
 
 It's a **really bad idea** to write a library like this one yourself -- even one that wraps pbkdf2 or a similar work unit spec. Every new API opens up new attack vectors. Older APIs have had time to be examined by security experts. Prior to publishing Credential, I had it reviewed by all the security experts I could find, and opened it up to peer review in public security forums. Be wary of any security library which has not had similar scrutiny.
