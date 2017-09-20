@@ -1,5 +1,5 @@
 # Credential
-[![Travis-CI](https://travis-ci.org/ericelliott/credential.svg)](https://travis-ci.org/ericelliott/credential)[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/learn-javascript-courses/javascript-questions?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Travis-CI](https://travis-ci.org/ericelliott/credential.svg)](https://travis-ci.org/ericelliott/credential)
 
 Easy password hashing and verification in Node. Protects against brute force, rainbow tables, and timing attacks.
 
