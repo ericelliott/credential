@@ -101,3 +101,75 @@ test('cli - hash - no password', function (t){
 
   stdin.end();
 });
+
+test('cli - expired', function (t){
+  credential().hash('password', function (err, hash){
+    t.ifError(err);
+
+    var stdin = execCli(['expired', hash, 90], function (err, stdout){
+      t.ifError(err);
+
+      var actual = stdout.trim();
+      var expected = 'Not expired';
+
+      t.is(actual, expected);
+
+      t.end();
+    });
+
+    stdin.end();
+  });
+});
+
+test('cli - expired - stdin', function (t){
+
+  credential().hash('password', function (err, hash){
+    t.ifError(err);
+
+    var stdin = execCli(['expired', '-', 90], function (err, stdout){
+      t.ifError(err);
+
+      var actual = stdout.trim();
+      var expected = 'Not expired';
+
+      t.is(actual, expected);
+
+      t.end();
+    });
+
+    stdin.write(hash);
+    stdin.end();
+  });
+});
+
+test('cli - expired - without days argument', function (t){
+  credential().hash('password', function (err, hash){
+    t.ifError(err);
+
+    var stdin = execCli(['expired', hash], function (err, stdout){
+      t.ifError(err);
+
+      var actual = stdout.trim();
+      var expected = 'Not expired';
+
+      t.is(actual, expected);
+
+      t.end();
+    });
+
+    stdin.end();
+  });
+});
+
+var pseudoOldHash = '{"iterations": 0}';
+
+test('cli - expired - did expired', function (t){
+  var stdin = execCli(['expired', pseudoOldHash, 0], function (err, stdout, stderr){
+    var actual = stderr.trim();
+    var expected = /Error: Expired/;
+    t.ok(expected.test(actual));
+    t.end();
+  });
+
+  stdin.end();
+});
