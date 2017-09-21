@@ -25,6 +25,7 @@ var crypto = require('crypto'),
   pify = require('pify'),
   P = require('pinkie-promise'),
   constantTimeCompare = require('./constantTimeCompare'),
+  bcrypt = require('bcrypt'),
 
   useDigest = process.versions.node.substr(0, 4) !== '0.10',
   msPerDay = 24 * 60 * 60 * 1000,
@@ -142,6 +143,26 @@ var crypto = require('crypto'),
     return JSON.parse(hash).iterations < minIterations;
   },
 
+  bcryptHash = function (password, hashMethod, keyLength, work, callback) {
+    bcrypt.genSalt(work, function (err, salt) {
+      if (err) {
+        return callback(err);
+      }
+      bcrypt.hash(password, salt, function (err, hash) {
+        if (err) {
+          return callback(err);
+        }
+        callback(null, JSON.stringify({
+          hash: hash.toString('base64'),
+          salt: salt,
+          keyLength: keyLength,
+          hashMethod: hashMethod,
+          iterations: work
+        }));
+      });
+    });
+  },
+
   /**
    * toHash(password, hashMethod, keyLength, work, callback) callback(err, hash)
    *
@@ -173,28 +194,32 @@ var crypto = require('crypto'),
         'non-empty string.'));
     }
 
-    // Create the salt
-    createSalt(keyLength, function (err, salt) {
-      if (err) {
-        return callback(err);
-      }
-
-      // Then create the hash
-      hashMethods[hashMethod](password, salt, n, keyLength, function (err, hash) {
+    if (hashMethod === 'bcrypt') {
+      bcryptHash.apply(null, arguments);
+    } else {
+      // Create the salt
+      createSalt(keyLength, function (err, salt) {
         if (err) {
           return callback(err);
         }
 
-        callback(null, JSON.stringify({
-          hash: hash,
-          salt: salt,
-          keyLength: keyLength,
-          hashMethod: hashMethod,
-          iterations: n
-        }));
+        // Then create the hash
+        hashMethods[hashMethod](password, salt, n, keyLength, function (err, hash) {
+          if (err) {
+            return callback(err);
+          }
 
+          callback(null, JSON.stringify({
+            hash: hash,
+            salt: salt,
+            keyLength: keyLength,
+            hashMethod: hashMethod,
+            iterations: n
+          }));
+
+        });
       });
-    });
+    }
   },
 
   parseHash = function parseHash (encodedHash) {
