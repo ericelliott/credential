@@ -1,24 +1,35 @@
 # Credential
 [![Travis-CI](https://travis-ci.org/ericelliott/credential.svg)](https://travis-ci.org/ericelliott/credential)
 
-Easy password hashing and verification in Node. Protects against brute force, rainbow tables, and timing attacks.
 
-Employs cryptographically secure, per password salts to prevent rainbow table attacks. Key stretching is used to make brute force attacks impractical. A constant time verification check prevents variable response time attacks.
+# Warning!
+
+[Passwords are obsolete](https://haveibeenpwned.com/). **It is not safe to manage user passwords in your own app, even if you use a well-tested, professionally audited library like Credential.**
+
+Please consider one of these alternative solutions from dedicated authentication security experts, instead of rolling your own password management:
+
+* [Magic](https://magic.link/)
+* [Firebase Authentication](https://firebase.google.com/products/auth/)
+* [Auth0](https://auth0.com/)
+* [Okta](https://www.okta.com/)
+* [The Web Authentication API](https://www.w3.org/TR/webauthn/)
+
+**It is irresponsible to the safety of your users to implement password authentication in your own app.**
+
+User password credential management is extremely risky and should not be attempted by most apps. Storing any user passwords on your servers is a threat to your user's personal and financial security. All app builders should delegate authentication to dedicated security experts.
+
+I wrote Credential years ago because I could not find an adequately secure password hashing library for Node. Between the time I wrote it and now, cracked passwords have been responsible for more than 80% of hacking-related breaches and virtually every active login username in the world has been leaked along with corresponding passwords by one or more major password database thefts.
+
+It's a **really bad idea** to use or write a library like this one yourself -- even one that wraps pbkdf2 or a similar work unit spec. Every new API opens up new attack vectors. Older APIs have had time to be examined by security experts. Prior to publishing Credential, I had it reviewed by all the security experts I could find, and opened it up to peer review in public security forums. I trust it more than any other password hashing library for JavaScript, but I would not trust it (or any other password-based alternative) to secure my own applications or users.
+
+If you are in the business of storing hashed passwords, it's only a matter of time before the black hats own your system.
 
 
-## Warning
+## What is Credential?
 
-User password credential management is extremely risky and should not be attempted by most apps. Storing any user passwords on your servers is a threat to your user's personal and financial security. If it's an option at all, consider outsourcing your credential management to a service dedicated to user authentication.
+Easy password hashing and verification in Node. Credential accounts for brute force, rainbow tables, and timing attacks.
 
-Companies with the resources to operate a full-time security staff with a red-team may need to handle their own credential management. Even then, you should stick to well tested libraries used by lots of people. Don't attempt to roll your own.
-
-I wrote this because I could not find an adequately secure password hashing library for Node.
-
-It's a **really bad idea** to write a library like this one yourself -- even one that wraps pbkdf2 or a similar work unit spec. Every new API opens up new attack vectors. Older APIs have had time to be examined by security experts. Prior to publishing Credential, I had it reviewed by all the security experts I could find, and opened it up to peer review in public security forums. Be wary of any security library which has not had similar scrutiny.
-
-Also note that passwords alone are obsolete. If it's your only security, it's only a matter of time before the black hats own your system. Please use multi-factor authentication.
-
-If you find a security flaw in this code, please [report it](https://github.com/ericelliott/credential/issues/new).
+Credential employs cryptographically secure, per password salts to prevent rainbow table attacks. Key stretching is used to make brute force attacks impractical. A constant time verification check prevents variable response time attacks.
 
 
 ## Installing
