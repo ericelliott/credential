@@ -24,6 +24,9 @@ It's a **really bad idea** to use or write a library like this one yourself -- e
 
 If you are in the business of storing hashed passwords, it's only a matter of time before the black hats own your system.
 
+## This library is deprecated and no longer maintained.
+
+## All other password libraries should also be considered obsolete.
 
 ## What is Credential?
 
