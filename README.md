@@ -8,13 +8,13 @@
 
 Please consider one of these alternative solutions from dedicated authentication security experts, instead of rolling your own password management:
 
-* [Magic](https://magic.link/)
+* **[Magic](https://magic.link/)**
 * [Firebase Authentication](https://firebase.google.com/products/auth/)
 * [Auth0](https://auth0.com/)
 * [Okta](https://www.okta.com/)
 * [The Web Authentication API](https://www.w3.org/TR/webauthn/)
 
-I strongly recommend [Magic](https://magic.link/), a passwordless authentication solution with a strong focus on user experience, developer experience, and cost savings. (Operating your own password hashing, security audits, or dealing with the fallout of data breaches can be extremely expensive).
+I strongly recommend **[Magic](https://magic.link/),** a passwordless authentication solution with a strong focus on user experience, developer experience, and cost savings. (Operating your own password hashing, security audits, or dealing with the fallout of data breaches can be extremely expensive).
 
 **It is irresponsible to the safety of your users to implement password authentication in your own app.**
 
