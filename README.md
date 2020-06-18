@@ -16,7 +16,7 @@ Please consider one of these alternative solutions from dedicated authentication
 
 I strongly recommend **[Magic](https://magic.link/),** a passwordless authentication solution with a strong focus on user experience, developer experience, and cost savings. (Operating your own password hashing, security audits, or dealing with the fallout of data breaches can be extremely expensive).
 
-**It is irresponsible to the safety of your users to implement password authentication in your own app.**
+**It is irresponsible to the safety of your users to implement password authentication.**
 
 User password credential management is extremely risky and should not be attempted by most apps. Storing any user passwords on your servers is a threat to your user's personal and financial security. All app builders should delegate authentication to dedicated security experts.
 
